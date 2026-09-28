@@ -166,4 +166,64 @@ renderFull();renderStudy();renderFlash();renderProg();
 })();
 </script>
 
-</body></html>
+</bod<!-- INICIO DE SESIÓN -->
+<div id="cuenta" style="position:fixed;top:12px;right:12px;z-index:9999;background:#18212f;color:white;padding:15px;border-radius:12px;width:260px;font-family:Arial">
+  <h3>Mi cuenta</h3>
+  <input id="email" type="email" placeholder="Tu correo" style="width:95%;padding:8px;margin:4px 0">
+  <input id="password" type="password" placeholder="Contraseña" style="width:95%;padding:8px;margin:4px 0">
+  <button onclick="registrar()">Crear cuenta</button>
+  <button onclick="entrar()">Iniciar sesión</button>
+  <button onclick="salir()">Cerrar sesión</button>
+  <p id="estadoCuenta">No has iniciado sesión</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://xdwosfpczlzpnhqmgpjr.supabase.co";
+const SUPABASE_KEY = "PEGA_AQUI_TU_PUBLISHABLE_KEY";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function registrar() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { error } = await db.auth.signUp({
+    email,
+    password
+  });
+
+  document.getElementById("estadoCuenta").textContent =
+    error ? error.message : "Revisa tu correo para confirmar la cuenta.";
+}
+
+async function entrar() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const { data, error } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  document.getElementById("estadoCuenta").textContent =
+    error ? error.message : "Sesión iniciada: " + data.user.email;
+}
+
+async function salir() {
+  await db.auth.signOut();
+  document.getElementById("estadoCuenta").textContent =
+    "Has cerrado sesión";
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    document.getElementById("estadoCuenta").textContent =
+      "Sesión iniciada: " + session.user.email;
+  }
+});
+</script>y></html>
