@@ -1,95 +1,686 @@
-const MM_SUPABASE_URL = 'https://xdwosfpczlzpnhqmgpjr.supabase.co';
 
-const MM_SUPABASE_PUBLIC_KEY = 'PEGA_AQUI_TU_CLAVE_PUBLICA_SUPABASE';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Máquinas y Mecanismos | 4º ESO</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#07111f;--panel:#101e32;--panel2:#162740;
+  --text:#f1f5f9;--muted:#9eb0c9;--blue:#4da3ff;
+  --border:#263b59;--green:#36d399;--red:#fb7185;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:Arial,sans-serif;line-height:1.6}
+header{background:#0d1b30;border-bottom:1px solid var(--border);
+padding:22px 5%;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:25px}
+header p{margin:4px 0;color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+button,.tab{cursor:pointer;border:1px solid var(--border);
+background:var(--panel);color:var(--text);padding:12px 17px;
+border-radius:12px;font-size:15px;font-weight:bold}
+button:hover,.tab:hover{border-color:var(--blue)}
+button.primary,.tab.active{background:var(--blue);color:#07111f;
+border-color:var(--blue)}
+button.danger{color:var(--red)}
+main{max-width:1100px;margin:30px auto;padding:0 18px}
+section{display:none}
+section.active{display:block}
+h2{font-size:26px;margin-top:0}
+h3{margin-top:0}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--border);
+border-radius:18px;padding:22px;margin-bottom:16px}
+.card h3{color:var(--blue)}
+input,select{width:100%;padding:14px;margin:8px 0 18px;
+background:#071525;border:1px solid var(--border);color:white;
+border-radius:12px;font-size:16px}
+label{display:block;font-weight:bold}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row button{flex:1}
+.big{font-size:40px;font-weight:bold;color:var(--blue)}
+.progress{height:12px;background:#263b59;border-radius:20px;overflow:hidden}
+.progress div{height:100%;background:var(--green);width:0%;transition:.3s}
+.answer{display:block;width:100%;text-align:left;margin:10px 0;
+background:var(--panel2);font-weight:normal}
+.answer.correct{background:#14543f;border-color:var(--green)}
+.answer.wrong{background:#642638;border-color:var(--red)}
+#feedback{padding:12px;border-radius:10px;margin:12px 0}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);padding:35px}
+</style>
+</head>
 
-const mmSupabase = (MM_SUPABASE_PUBLIC_KEY &&
-  !MM_SUPABASE_PUBLIC_KEY.startsWith('PEGA_AQUI'))
-  ? window.supabase.createClient(
-      MM_SUPABASE_URL,
-      MM_SUPABASE_PUBLIC_KEY
-    )
-  : null;function mmUsername() {
-  return document.getElementById('accountUsername')
+<body>
+<header>
+  <h1>⚙️ Máquinas y Mecanismos</h1>
+  <p>4.º ESO · Aprende, practica y comprueba tus conocimientos</p>
+  <nav>
+    <button class="tab active" onclick="showPage('inicio',this)">Inicio</button>
+    <button class="tab" onclick="showPage('estudiar',this)">Estudiar</button>
+    <button class="tab" onclick="showPage('tarjetas',this)">Tarjetas</button>
+    <button class="tab" onclick="showPage('test',this)">Hacer test</button>
+    <button class="tab" onclick="showPage('progreso',this)">Mi progreso</button>
+    <button class="tab" onclick="showPage('cuenta',this)">Mi cuenta</button>
+  </nav>
+</header>
+
+<main>
+
+<section id="inicio" class="active">
+  <div class="card">
+    <h2>¡Bienvenido a tu zona de estudio!</h2>
+    <p class="muted">Practica las máquinas y los mecanismos de Tecnología de 4.º ESO. Repasa la teoría, usa las tarjetas y ponte a prueba con los cuestionarios.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>📚 Estudiar</h3>
+        <p>Repasa los conceptos fundamentales del tema.</p>
+        <button class="primary" onclick="showPage('estudiar')">Empezar</button>
+      </div>
+      <div class="card">
+        <h3>🧠 Tarjetas</h3>
+        <p>Memoriza las definiciones con preguntas rápidas.</p>
+        <button class="primary" onclick="showPage('tarjetas')">Practicar</button>
+      </div>
+      <div class="card">
+        <h3>📝 Test</h3>
+        <p>Responde preguntas y calcula tu nota.</p>
+        <button class="primary" onclick="showPage('test')">Hacer test</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Tu progreso</h3>
+    <p>Tests completados: <b id="homeTests">0</b></p>
+    <p>Mejor nota: <b id="homeBest">0%</b></p>
+    <div class="progress"><div id="homeBar"></div></div>
+  </div>
+</section>
+
+<section id="estudiar">
+  <h2>📚 Zona de estudio</h2>
+  <p class="muted">Selecciona un tema para repasar.</p>
+  <input id="searchStudy" placeholder="Buscar concepto..." oninput="renderStudy()">
+  <div id="studyList"></div>
+</section>
+
+<section id="tarjetas">
+  <h2>🧠 Tarjetas de memoria</h2>
+  <div class="card" style="text-align:center">
+    <p class="muted" id="cardCounter">Tarjeta 1</p>
+    <h2 id="flashQuestion">Pregunta</h2>
+    <div id="flashAnswer" class="hidden">
+      <hr>
+      <p id="flashText"></p>
+    </div>
+    <div class="row">
+      <button onclick="flipCard()">Mostrar respuesta</button>
+      <button class="primary" onclick="nextCard()">Siguiente →</button>
+    </div>
+  </div>
+</section>
+
+<section id="test">
+  <h2>📝 Cuestionario</h2>
+  <div class="card">
+    <label for="testLength">Número de preguntas</label>
+    <select id="testLength">
+      <option value="10">10 preguntas</option>
+      <option value="20">20 preguntas</option>
+      <option value="50">50 preguntas</option>
+      <option value="100">100 preguntas</option>
+    </select>
+    <button class="primary" onclick="startTest()">Comenzar test</button>
+  </div>
+  <div id="quizArea" class="card hidden">
+    <p class="muted" id="quizCounter"></p>
+    <div class="progress"><div id="quizBar"></div></div>
+    <h3 id="quizQuestion"></h3>
+    <div id="quizOptions"></div>
+    <p id="feedback" class="hidden"></p>
+    <button id="nextQuestion" class="primary hidden" onclick="nextQuestion()">Siguiente pregunta →</button>
+  </div>
+  <div id="quizResult" class="card hidden"></div>
+</section>
+
+<section id="progreso">
+  <h2>📊 Mi progreso</h2>
+  <div class="grid">
+    <div class="card"><p class="muted">Tests realizados</p><div class="big" id="statTests">0</div></div>
+    <div class="card"><p class="muted">Mejor nota</p><div class="big" id="statBest">0%</div></div>
+    <div class="card"><p class="muted">Media</p><div class="big" id="statAvg">0%</div></div>
+  </div>
+  <div class="card">
+    <h3>Historial de resultados</h3>
+    <div id="history"></div>
+  </div>
+</section>
+
+<section id="cuenta">
+  <h2>👤 Mi cuenta</h2>
+  <div class="card">
+    <div id="loggedIn" class="hidden">
+      <h3>¡Hola, <span id="displayUser"></span>!</h3>
+      <p class="muted">Has iniciado sesión.</p>
+      <button class="danger" onclick="logout()">Cerrar sesión</button>
+    </div>
+    <div id="authForm">
+      <h3>Crear cuenta o iniciar sesión</h3>
+      <p class="muted">Usa un nombre de usuario y una contraseña exclusiva para esta web. No introduzcas la contraseña de tu correo.</p>
+      <label>Nombre de usuario</label>
+      <input id="accountUsername" maxlength="30" placeholder="Ej. Nicolas15" autocomplete="username">
+      <label>Contraseña (mínimo 8 caracteres)</label>
+      <input id="accountPassword" type="password" placeholder="Tu contraseña" autocomplete="new-password">
+      <div class="row">
+        <button class="primary" onclick="accountRegister()">Crear cuenta</button>
+        <button onclick="accountLogin()">Iniciar sesión</button>
+      </div>
+      <p id="authMessage"></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>Máquinas y Mecanismos · Tecnología 4.º ESO</footer>
+
+<script>
+// ===================================================
+// CONFIGURACIÓN DE SUPABASE
+// Sustituye SOLO la clave pública por la de tu proyecto.
+// Nunca pegues una service_role o una clave secret aquí.
+// ===================================================
+
+const SUPABASE_URL = "https://xdwosfpczlzpnhqmgpjr.supabase.co";
+const SUPABASE_KEY = "PEGA_AQUI_TU_CLAVE_PUBLICA_SUPABASE";
+
+let supabaseClient = null;
+
+if (window.supabase && SUPABASE_KEY &&
+    !SUPABASE_KEY.startsWith("PEGA_AQUI")) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL, SUPABASE_KEY
+  );
+}
+
+// ===================================================
+// BANCO DE ESTUDIO
+// Preguntas basadas en el cuestionario de Máquinas
+// y Mecanismos de 4.º ESO.
+// Las respuestas se han redactado para practicar.
+// ===================================================
+
+const data = [
+["¿Qué es una fuerza?","Una interacción capaz de cambiar el movimiento o deformar un cuerpo."],
+["¿Cuáles son las tres características de una fuerza?","Módulo o intensidad, dirección y sentido; también se representa con un punto de aplicación."],
+["¿Cuál es la unidad de fuerza del SI?","El newton (N)."],
+["¿Qué diferencia hay entre masa y peso?","La masa mide la cantidad de materia; el peso es la fuerza gravitatoria sobre un cuerpo."],
+["¿Qué es una máquina?","Un dispositivo que facilita la realización de un trabajo o transforma fuerzas o movimientos."],
+["¿Qué es un mecanismo?","Un conjunto de elementos que transmiten o transforman movimientos y fuerzas."],
+["¿Qué diferencia hay entre máquina simple y compuesta?","La simple funciona con un mecanismo básico; la compuesta combina varias máquinas o mecanismos."],
+["Nombra tres máquinas simples.","Palanca, polea y plano inclinado."],
+["¿Qué movimiento realiza una rueda?","Movimiento circular o de rotación."],
+["¿Qué movimiento tiene una puerta corredera?","Movimiento rectilíneo."],
+["¿Qué es un movimiento alternativo?","Un movimiento de vaivén que se repite entre dos posiciones."],
+["¿Qué es un mecanismo de transmisión?","Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo."],
+["¿Qué es un mecanismo de transformación?","Cambia un tipo de movimiento por otro."],
+["¿Cuál es la ley de la palanca?","Fuerza por brazo de fuerza igual a resistencia por brazo de resistencia."],
+["¿Qué es el fulcro?","El punto de apoyo o giro de una palanca."],
+["¿Dónde está el apoyo en una palanca de primer género?","Entre la fuerza aplicada y la resistencia."],
+["¿Dónde está la resistencia en una palanca de segundo género?","Entre el punto de apoyo y la fuerza aplicada."],
+["¿Dónde está la fuerza en una palanca de tercer género?","Entre el apoyo y la resistencia."],
+["Pon un ejemplo de palanca de primer género.","Un balancín o unas tijeras."],
+["Pon un ejemplo de palanca de segundo género.","Una carretilla o un cascanueces."],
+["Pon un ejemplo de palanca de tercer género.","Unas pinzas o el antebrazo al levantar un objeto."],
+["¿Qué es una polea?","Una rueda con una garganta por la que pasa una cuerda o cable."],
+["¿Qué ventaja tiene una polea fija?","Cambia la dirección de la fuerza, pero idealmente no reduce su módulo."],
+["¿Qué ventaja tiene una polea móvil?","Reduce aproximadamente a la mitad la fuerza necesaria, idealmente."],
+["¿Qué es un polipasto?","Un conjunto de poleas fijas y móviles para levantar cargas con menos fuerza."],
+["¿Qué son las ruedas de fricción?","Ruedas que transmiten movimiento por contacto entre sus superficies."],
+["¿En qué sentido giran dos ruedas de fricción en contacto?","En sentidos opuestos."],
+["¿Para qué sirve una correa en poleas?","Para transmitir giro entre poleas separadas."],
+["¿Qué ocurre con una correa cruzada?","Las poleas giran en sentidos opuestos."],
+["¿Qué son los engranajes?","Ruedas dentadas que transmiten movimiento mediante el contacto de sus dientes."],
+["¿Para qué sirven los dientes de un engranaje?","Para evitar el deslizamiento y transmitir el giro."],
+["¿Qué transmiten los engranajes?","Movimiento circular y par o fuerza de giro."],
+["¿Qué tipos de engranajes existen?","Rectos, helicoidales, cónicos y tornillo sin fin, entre otros."],
+["¿Para qué sirve un tornillo sin fin?","Para transmitir movimiento entre ejes normalmente perpendiculares y conseguir gran reducción."],
+["¿Qué mecanismo transforma giro en movimiento lineal mediante una barra dentada?","Piñón-cremallera."],
+["¿Qué elementos forman el mecanismo piñón-cremallera?","Un piñón dentado y una barra dentada llamada cremallera."],
+["¿Qué mecanismo se usa en la dirección de muchos coches?","Piñón-cremallera."],
+["¿Qué es un mecanismo tornillo-tuerca?","Un sistema que convierte el giro de un elemento en desplazamiento lineal relativo."],
+["¿Qué movimiento transforma el tornillo-tuerca?","Movimiento circular en movimiento rectilíneo."],
+["¿Qué es una leva?","Una pieza de perfil especial que empuja a un seguidor y transforma el giro en movimiento alternativo."],
+["¿Qué es una excéntrica?","Un disco cuyo eje de giro no coincide con su centro geométrico."],
+["¿Qué elementos tiene el mecanismo biela-manivela?","Manivela, biela y corredera o pistón."],
+["¿Qué movimiento realiza un pistón?","Movimiento rectilíneo alternativo."],
+["¿Qué es un cigüeñal?","Un eje con codos que transforma movimiento alternativo en giro o al contrario."],
+["¿Para qué sirve el cigüeñal en un motor?","Transforma el movimiento alternativo de los pistones en movimiento giratorio."],
+["¿Qué significa reducir el esfuerzo?","Necesitar aplicar una fuerza menor para realizar una tarea, normalmente recorriendo más distancia."],
+["¿Qué fuerza atrae los cuerpos hacia la Tierra?","La fuerza de la gravedad."],
+["¿Cuál es la fórmula del peso?","P = m · g."],
+["¿De qué depende la intensidad de una fuerza?","De su módulo, expresado en newtons."],
+["¿Qué movimiento tiene la hoja de una sierra de calar?","Movimiento alternativo rectilíneo."],
+["¿Qué elemento produce el movimiento en una máquina?","El elemento motriz."],
+["¿Qué elemento recibe el movimiento?","El elemento conducido o receptor."],
+["¿Qué movimiento puede transformar una manivela con biela?","Entre movimiento circular y rectilíneo alternativo."],
+["¿Qué es un torno o cabrestante?","Un mecanismo que enrolla una cuerda en un tambor para mover una carga."],
+["¿Qué mecanismo se usa tradicionalmente para sacar agua de un pozo?","Un torno o cabrestante, a menudo con manivela."],
+["¿Qué mecanismo permite elevar una carga en una grúa?","Poleas, cables y mecanismos de elevación."],
+["¿Qué movimiento realiza una polea al funcionar?","Movimiento circular de rotación."],
+["¿Qué fuerza ideal se necesita con una polea móvil simple?","Aproximadamente la mitad del peso de la carga."],
+["¿Qué es la relación de transmisión?","La relación entre las velocidades de giro de los elementos conducido y motriz, según la convención usada."],
+["¿En qué unidad se expresa la velocidad de giro?","Revoluciones por minuto (rpm) o radianes por segundo."],
+["¿Qué es la rueda motriz?","La rueda que proporciona el movimiento al sistema."],
+["¿Qué es la rueda conducida?","La rueda que recibe el movimiento de la motriz."],
+["¿Qué es un reductor de velocidad?","Un mecanismo que disminuye la velocidad de salida y normalmente aumenta el par."],
+["¿Qué es un multiplicador de velocidad?","Un mecanismo que aumenta la velocidad de salida y normalmente reduce el par."],
+["¿Qué engranaje suele funcionar con menos ruido?","El engranaje helicoidal suele ser más silencioso que el recto en condiciones comparables."],
+["¿Qué engranajes se usan para transmitir entre ejes perpendiculares?","Engranajes cónicos; también puede usarse un tornillo sin fin."],
+["¿Qué mecanismo transmite el movimiento en una bicicleta?","Cadena y ruedas dentadas o piñones."],
+["¿Qué mecanismo suele haber en las clavijas de una guitarra?","Un sistema reductor de engranajes, a menudo con tornillo sin fin."],
+["¿Qué ventaja tiene el tornillo sin fin?","Puede proporcionar una gran reducción de velocidad y aumento del par."],
+["¿Qué mecanismo transforma giro en desplazamiento rectilíneo?","Piñón-cremallera o tornillo-tuerca, según el sistema."],
+["¿Qué es un mecanismo reversible?","Uno que permite transmitir movimiento en ambos sentidos entre entrada y salida."],
+["¿Qué mecanismo se usa en un gato mecánico de coche?","Un mecanismo de tornillo-tuerca o de palanca, según el modelo."],
+["¿Qué máquina simple es un trípode?","No es propiamente una máquina simple; es una estructura de soporte estable."],
+["¿Qué mecanismos puede tener una puerta automática de garaje?","Motor, engranajes, poleas, cadena o tornillo, según el diseño."],
+["¿Qué movimiento realiza el seguidor de una leva?","Normalmente alternativo o de vaivén."],
+["¿Por qué una leva normalmente no es reversible?","Porque el seguidor no suele poder hacer girar el perfil de leva de forma continua."],
+["¿Qué mecanismo aparece en una locomotora de vapor tradicional?","Biela-manivela para transformar el movimiento del pistón en giro de las ruedas."],
+["¿Qué mecanismo hay en un motor de combustión?","Pistón, biela y cigüeñal."],
+["¿Qué pieza conecta el cigüeñal con el pistón?","La biela."],
+["¿Qué movimiento transforma el cigüeñal?","Movimiento alternativo del pistón en movimiento giratorio."],
+["¿Qué mecanismo permite levantar cargas pesadas con menos esfuerzo?","Un polipasto."],
+["¿Qué máquina simple es una barra rígida que gira sobre un apoyo?","La palanca."],
+["¿Qué máquina simple es una superficie inclinada?","El plano inclinado."],
+["¿A qué máquina simple se relaciona el tornillo?","Al plano inclinado enrollado alrededor de un cilindro."],
+["¿Qué movimiento tiene la broca de un taladro?","Movimiento giratorio."],
+["¿Qué movimiento realiza un ascensor?","Movimiento rectilíneo vertical."],
+["¿Qué ocurre al aumentar el brazo de fuerza de una palanca?","Se necesita menos fuerza para equilibrar la misma resistencia."],
+["¿Qué elemento engrana con una rueda dentada en un sistema piñón-cremallera?","La cremallera."],
+["¿Qué mecanismo transforma movimiento alternativo en circular?","Biela-manivela."],
+["¿Qué mecanismo se utiliza en muchos relojes mecánicos?","Engranajes y un sistema regulador, como escape y volante o péndulo."],
+["¿Qué mecanismo hace girar el tambor de una lavadora?","Motor y sistema de transmisión por correa o accionamiento directo."],
+["¿Qué mecanismo alimenta el papel en una impresora?","Rodillos de arrastre accionados por motores y engranajes."],
+["¿Qué elemento enrolla la cuerda en un torno?","El tambor."],
+["¿Qué significa rpm?","Revoluciones por minuto."],
+["¿Qué movimiento realiza el pistón de un motor?","Rectilíneo alternativo."],
+["¿Qué mecanismo transforma giro en movimiento alternativo?","Leva-seguidor o biela-manivela, según el diseño."],
+["¿Qué parte fija de una máquina soporta los esfuerzos?","La estructura o bastidor."],
+["¿Qué elemento móvil permite el movimiento relativo entre piezas?","Una articulación, guía o elemento móvil, según el mecanismo."],
+["¿Qué engranaje tiene dientes inclinados?","El engranaje helicoidal."],
+["¿Qué mecanismo convierte el giro en desplazamiento lineal continuo?","Piñón-cremallera."]
+];
+
+// ===================================================
+// NAVEGACIÓN
+// ===================================================
+
+function showPage(id, button) {
+  document.querySelectorAll("main section").forEach(s =>
+    s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll(".tab").forEach(b =>
+    b.classList.remove("active"));
+  if (button) button.classList.add("active");
+
+  if (id === "progreso") renderProgress();
+  if (id === "estudiar") renderStudy();
+}
+
+// ===================================================
+// ESTUDIO
+// ===================================================
+
+function renderStudy() {
+  const term = (document.getElementById("searchStudy")?.value || "")
+    .toLowerCase();
+  const list = document.getElementById("studyList");
+  list.innerHTML = "";
+
+  data.forEach((item, i) => {
+    if (!item[0].toLowerCase().includes(term) &&
+        !item[1].toLowerCase().includes(term)) return;
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<h3>${i+1}. ${escapeHTML(item[0])}</h3>
+      <p>${escapeHTML(item[1])}</p>`;
+    list.appendChild(card);
+  });
+}
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#039;"
+  })[c]);
+}
+
+// ===================================================
+// TARJETAS
+// ===================================================
+
+let flashIndex = 0;
+
+function renderFlash() {
+  document.getElementById("cardCounter").textContent =
+    `Tarjeta ${flashIndex+1} de ${data.length}`;
+  document.getElementById("flashQuestion").textContent =
+    data[flashIndex][0];
+  document.getElementById("flashText").textContent =
+    data[flashIndex][1];
+  document.getElementById("flashAnswer").classList.add("hidden");
+}
+
+function flipCard() {
+  document.getElementById("flashAnswer").classList.toggle("hidden");
+}
+
+function nextCard() {
+  flashIndex = (flashIndex+1) % data.length;
+  renderFlash();
+}
+
+// ===================================================
+// TEST
+// ===================================================
+
+let questions = [];
+let qIndex = 0;
+let score = 0;
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startTest() {
+  const n = Math.min(
+    Number(document.getElementById("testLength").value),
+    data.length
+  );
+
+  questions = shuffle(data).slice(0,n);
+  qIndex=0;
+  score=0;
+  answered=false;
+
+  document.getElementById("quizArea").classList.remove("hidden");
+  document.getElementById("quizResult").classList.add("hidden");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered=false;
+  const item=questions[qIndex];
+
+  document.getElementById("quizCounter").textContent =
+    `Pregunta ${qIndex+1} de ${questions.length}`;
+  document.getElementById("quizBar").style.width =
+    (qIndex/questions.length*100)+"%";
+  document.getElementById("quizQuestion").textContent=item[0];
+
+  const options=document.getElementById("quizOptions");
+  options.innerHTML="";
+
+  // Tres respuestas incorrectas elegidas del banco.
+  const wrong=shuffle(data.filter(x=>x[1]!==item[1]))
+    .slice(0,3).map(x=>x[1]);
+  const choices=shuffle([item[1],...wrong]);
+
+  choices.forEach(choice=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=choice;
+    b.onclick=()=>checkAnswer(b,choice,item[1]);
+    options.appendChild(b);
+  });
+
+  document.getElementById("feedback").classList.add("hidden");
+  document.getElementById("nextQuestion").classList.add("hidden");
+}
+
+function checkAnswer(button,choice,correct) {
+  if(answered)return;
+  answered=true;
+
+  const right=choice===correct;
+  if(right)score++;
+
+  document.querySelectorAll(".answer").forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===correct)b.classList.add("correct");
+  });
+  if(!right)button.classList.add("wrong");
+
+  const f=document.getElementById("feedback");
+  f.classList.remove("hidden");
+  f.style.background=right?"#14543f":"#642638";
+  f.textContent=right?"¡Correcto!":"Incorrecto. Respuesta correcta: "+correct;
+
+  const next=document.getElementById("nextQuestion");
+  next.textContent=qIndex===questions.length-1?"Ver resultados":"Siguiente pregunta →";
+  next.classList.remove("hidden");
+}
+
+async function nextQuestion() {
+  qIndex++;
+  if(qIndex<questions.length) {
+    renderQuestion();
+  } else {
+    await finishTest();
+  }
+}
+
+async function finishTest() {
+  const percent=Math.round(score/questions.length*100);
+  const results=getResults();
+  results.push({
+    date:new Date().toLocaleString("es-ES"),
+    score, total:questions.length, percent
+  });
+  localStorage.setItem("mmResults",JSON.stringify(results));
+
+  document.getElementById("quizArea").classList.add("hidden");
+  const r=document.getElementById("quizResult");
+  r.classList.remove("hidden");
+  r.innerHTML=`<h2>¡Test terminado!</h2>
+    <div class="big">${percent}%</div>
+    <p>Has acertado ${score} de ${questions.length} preguntas.</p>
+    <p>${percent>=90?"¡Excelente trabajo!":
+      percent>=70?"¡Buen trabajo! Sigue repasando.":
+      "Repasa los conceptos y vuelve a intentarlo."}</p>
+    <button class="primary" onclick="startTest()">Repetir test</button>`;
+
+  updateHome();
+
+  if(supabaseClient) {
+    const {data:{user}}=await supabaseClient.auth.getUser();
+    if(user) {
+      const {error}=await supabaseClient.from("resultados").insert({
+        user_id:user.id,
+        nota:percent,
+        aciertos:score,
+        total:questions.length
+      });
+      if(error) console.log("No se pudo guardar en Supabase:",error.message);
+    }
+  }
+}
+
+// ===================================================
+// PROGRESO
+// ===================================================
+
+function getResults() {
+  try {
+    return JSON.parse(localStorage.getItem("mmResults")||"[]");
+  } catch(e) {
+    return [];
+  }
+}
+
+function renderProgress() {
+  const r=getResults();
+  const best=r.length?Math.max(...r.map(x=>x.percent)):0;
+  const avg=r.length?Math.round(r.reduce((a,x)=>a+x.percent,0)/r.length):0;
+
+  document.getElementById("statTests").textContent=r.length;
+  document.getElementById("statBest").textContent=best+"%";
+  document.getElementById("statAvg").textContent=avg+"%";
+
+  const h=document.getElementById("history");
+  h.innerHTML=r.length?"":"Todavía no has hecho ningún test.";
+
+  [...r].reverse().forEach(x=>{
+    const p=document.createElement("p");
+    p.textContent=`${x.date}: ${x.score}/${x.total} aciertos (${x.percent}%)`;
+    h.appendChild(p);
+  });
+}
+
+function updateHome() {
+  const r=getResults();
+  const best=r.length?Math.max(...r.map(x=>x.percent)):0;
+  document.getElementById("homeTests").textContent=r.length;
+  document.getElementById("homeBest").textContent=best+"%";
+  document.getElementById("homeBar").style.width=best+"%";
+}
+
+// ===================================================
+// CUENTAS SUPABASE
+// ===================================================
+
+function usernameValue() {
+  return document.getElementById("accountUsername")
     .value.trim().toLowerCase();
 }
 
-function mmLoginId(username) {
-  return username + '@users.example.com';
+function usernameEmail(username) {
+  // Identificador interno para Supabase Auth.
+  // No es el correo personal del usuario.
+  return username+"@users.example.com";
+}
+
+function accountMessage(text,success=false) {
+  const el=document.getElementById("authMessage");
+  el.textContent=text;
+  el.style.color=success?"var(--green)":"var(--red)";
 }
 
 async function accountRegister() {
-  if (!mmSupabase) {
-    accountMessage('Falta configurar la clave pública de Supabase.');
+  if(!supabaseClient) {
+    accountMessage("Configura primero la clave pública de Supabase.");
     return;
   }
 
-  const username = mmUsername();
-  const password = document.getElementById('accountPassword').value;
+  const username=usernameValue();
+  const password=document.getElementById("accountPassword").value;
 
-  if (!/^[a-z0-9_]{3,30}$/.test(username)) {
-    accountMessage('El usuario debe tener entre 3 y 30 caracteres.');
+  if(!/^[a-z0-9_]{3,30}$/.test(username)) {
+    accountMessage("Usa entre 3 y 30 caracteres: letras, números o guion bajo.");
+    return;
+  }
+  if(password.length<8) {
+    accountMessage("La contraseña debe tener al menos 8 caracteres.");
     return;
   }
 
-  if (password.length < 8) {
-    accountMessage('La contraseña debe tener al menos 8 caracteres.');
-    return;
-  }
-
-  const { data, error } = await mmSupabase.auth.signUp({
-    email: mmLoginId(username),
+  const {data,error}=await supabaseClient.auth.signUp({
+    email:usernameEmail(username),
     password,
-    options: {
-      data: { username }
-    }
+    options:{data:{username}}
   });
 
-  if (error) {
+  if(error) {
     accountMessage(error.message);
     return;
   }
 
-  if (data.session) {
-    accountMessage('Cuenta creada correctamente.', true);
+  if(data.session) {
+    accountMessage("Cuenta creada correctamente.",true);
     refreshAccountUI();
   } else {
-    accountMessage('Desactiva la confirmación de correo en Supabase.');
+    accountMessage("Cuenta creada. Si no se inicia sesión, revisa la confirmación de email en Supabase.");
   }
 }
 
 async function accountLogin() {
-  if (!mmSupabase) {
-    accountMessage('Falta configurar la clave pública de Supabase.');
+  if(!supabaseClient) {
+    accountMessage("Configura primero la clave pública de Supabase.");
     return;
   }
 
-  const username = mmUsername();
-  const password = document.getElementById('accountPassword').value;
+  const username=usernameValue();
+  const password=document.getElementById("accountPassword").value;
 
-  const { error } = await mmSupabase.auth.signInWithPassword({
-    email: mmLoginId(username),
+  if(!username||!password) {
+    accountMessage("Introduce usuario y contraseña.");
+    return;
+  }
+
+  const {error}=await supabaseClient.auth.signInWithPassword({
+    email:usernameEmail(username),
     password
   });
 
-  if (error) {
-    accountMessage('Usuario o contraseña incorrectos.');
+  if(error) {
+    accountMessage("Usuario o contraseña incorrectos.");
     return;
   }
 
-  accountMessage('Sesión iniciada correctamente.', true);
+  accountMessage("Sesión iniciada correctamente.",true);
   refreshAccountUI();
 }
 
-async function accountLogout() {
-  if (!mmSupabase) return;
-
-  const { error } = await mmSupabase.auth.signOut();
-
-  if (error) {
+async function logout() {
+  if(!supabaseClient)return;
+  const {error}=await supabaseClient.auth.signOut();
+  if(error) {
     accountMessage(error.message);
     return;
   }
-
-  accountMessage('Has cerrado sesión.', true);
   refreshAccountUI();
 }
+
+async function refreshAccountUI() {
+  let user=null;
+
+  if(supabaseClient) {
+    const {data}=await supabaseClient.auth.getUser();
+    user=data.user;
+  }
+
+  document.getElementById("loggedIn").classList.toggle("hidden",!user);
+  document.getElementById("authForm").classList.toggle("hidden",!!user);
+
+  if(user) {
+    document.getElementById("displayUser").textContent=
+      user.user_metadata?.username||user.email;
+  }
+}
+
+// ===================================================
+// INICIALIZACIÓN
+// ===================================================
+
+renderStudy();
+renderFlash();
+updateHome();
+refreshAccountUI();
+</script>
+</body>
+</html>
