@@ -336,7 +336,41 @@ footer {
   </div>
 </section>
 
+
 <section id="cuenta">
+  <h2 class="section-title">Mi cuenta</h2>
+
+  <div class="panel">
+    <div id="userInfo" class="hidden">
+      <h3>¡Bienvenido!</h3>
+      <p id="userEmail"></p>
+      <button class="danger" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <div id="authForm">
+      <h3>Accede a tu cuenta</h3>
+      <p style="color:var(--muted)">
+        Crea tu cuenta con un nombre de usuario y una contraseña.
+        No necesitas correo electrónico.
+      </p>
+
+      <label for="username">Nombre de usuario</label>
+      <input id="username" type="text"
+        placeholder="Elige tu nombre de usuario"
+        maxlength="30" autocomplete="username">
+
+      <label for="password">Contraseña</label>
+      <input id="password" type="password"
+        placeholder="Elige una contraseña"
+        minlength="8" autocomplete="new-password">
+
+      <button class="primary" onclick="register()">Crear cuenta</button>
+      <button class="secondary" onclick="login()">Iniciar sesión</button>
+
+      <div id="authMessage"></div>
+    </div>
+  </div>
+</section>
   <h2 class="section-title">Mi cuenta</h2>
 
   <div class="panel">
