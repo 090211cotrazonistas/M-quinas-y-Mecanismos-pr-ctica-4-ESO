@@ -1,229 +1,931 @@
-<!doctype html><html lang="es"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Máquinas y Mecanismos 4º ESO</title>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Máquinas y Mecanismos | 4º ESO</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#07101d;--p:#0d1828;--p2:#122238;--l:#253852;--t:#eef5ff;--m:#9eb0c9;--b:#55a8ff;--g:#35d07f;--r:#ff6570}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 20% 0,#142b49,#07101d 40%);color:var(--t)}
-header{position:sticky;top:0;z-index:20;background:#07101df2;backdrop-filter:blur(14px);border-bottom:1px solid var(--l)}
-.wrap{max-width:1200px;margin:auto;padding:0 18px}.head{padding:20px 0}h1{margin:0;font-size:30px}.sub,.muted,.small{color:var(--m)}
-nav{display:flex;gap:8px;overflow:auto;padding-bottom:14px}button,.btn{border:1px solid var(--l);background:var(--p);color:var(--t);padding:11px 14px;border-radius:11px;font-weight:800;cursor:pointer}button:hover{filter:brightness(1.15)}nav button.active,.primary{background:var(--b);color:#04101e;border-color:var(--b)}
-main{padding:26px 0 60px}.hidden{display:none!important}.hero{padding:26px;border-radius:20px;background:linear-gradient(120deg,#122d4d,#101a2a);border:1px solid var(--l);margin-bottom:18px}.hero h2{font-size:32px;margin:0 0 8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:#0d1828f5;border:1px solid var(--l);border-radius:17px;padding:18px;margin:13px 0}
-.progress{height:9px;background:#1b2a41;border-radius:99px;overflow:hidden;margin:14px 0}.bar{height:100%;width:0;background:var(--b);transition:.2s}
-.qhead{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.qnum{color:var(--b);font-weight:900}.topic,.badge{font-size:12px;padding:5px 8px;border-radius:99px;background:#1c304a;color:#bcd6f5;white-space:nowrap}
-.option{width:100%;display:block;text-align:left;margin:8px 0;background:#091522}.selected{outline:2px solid #55a8ff55;border-color:var(--b)}.correct{border-color:var(--g)!important;background:#35d07f12}.wrong{border-color:var(--r)!important;background:#ff657012}
-.feedback{font-size:14px;color:var(--m);margin-top:10px}.good{color:var(--g)}.bad{color:var(--r)}.big{font-size:30px;font-weight:900}
-.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:14px 0}
-input,select{background:#091522;border:1px solid var(--l);color:var(--t);padding:12px;border-radius:10px}
-.study-q{cursor:pointer;font-weight:850;display:flex;justify-content:space-between;gap:12px}.answer{display:none;border-top:1px solid var(--l);margin-top:13px;padding-top:14px;line-height:1.55;color:#d8e6fa}.answer.open{display:block}
-.flash{font-size:25px;text-align:center;min-height:150px;display:flex;align-items:center}.flash button{width:100%;min-height:150px;font-size:22px}.note{background:#18283d;padding:12px;border-radius:12px;margin:8px 0}
-footer{text-align:center;color:var(--m);padding:30px}@media(max-width:650px){h1{font-size:24px}.hero h2{font-size:27px}.qhead{flex-direction:column}}
+:root {
+  --bg: #0b1020;
+  --panel: #141c30;
+  --panel2: #1b2740;
+  --primary: #6366f1;
+  --accent: #22d3ee;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --border: #293650;
+  --green: #22c55e;
+  --red: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 6%;
+  background: #10172a;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.logo span { color: var(--accent); }
+
+nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button, .navbtn {
+  cursor: pointer;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 17px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: .2s;
+}
+
+button:hover { transform: translateY(-2px); }
+
+.primary {
+  background: var(--primary);
+  color: white;
+}
+
+.secondary {
+  background: var(--panel2);
+  color: white;
+  border: 1px solid var(--border);
+}
+
+.danger {
+  background: #7f1d1d;
+  color: white;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 35px 20px 70px;
+}
+
+section { margin-bottom: 40px; }
+
+.hero {
+  padding: 60px 35px;
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  background: linear-gradient(135deg,#1e1b4b,#0f3044);
+  text-align: center;
+}
+
+.tag {
+  display: inline-block;
+  background: #312e81;
+  color: #c7d2fe;
+  padding: 7px 13px;
+  border-radius: 30px;
+  font-size: 13px;
+}
+
+h1 {
+  font-size: clamp(32px,5vw,55px);
+  margin: 20px 0;
+}
+
+h1 span { color: var(--accent); }
+
+.hero p {
+  color: #cbd5e1;
+  line-height: 1.7;
+  max-width: 650px;
+  margin: 0 auto 25px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+  gap: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 18px;
+}
+
+.card h3 { margin-top: 10px; }
+
+.card p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.icon { font-size: 35px; }
+
+.section-title {
+  font-size: 27px;
+  margin-bottom: 20px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 25px;
+  border-radius: 18px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0 15px;
+  border-radius: 10px;
+  background: #0b1020;
+  border: 1px solid var(--border);
+  color: white;
+  font-size: 15px;
+}
+
+label {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.hidden { display: none !important; }
+
+.status {
+  padding: 12px;
+  border-radius: 10px;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.status.error {
+  background: #451a1a;
+  color: #fecaca;
+}
+
+.status.success {
+  background: #14532d;
+  color: #bbf7d0;
+}
+
+.quiz-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  color: var(--muted);
+}
+
+.progress {
+  height: 9px;
+  border-radius: 20px;
+  background: #273449;
+  overflow: hidden;
+  margin: 15px 0 25px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,var(--primary),var(--accent));
+  transition: width .3s;
+}
+
+.question {
+  font-size: 22px;
+  line-height: 1.5;
+  margin: 20px 0;
+}
+
+.answer-area {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.quiz-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.result-number {
+  font-size: 45px;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 14px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+th { color: var(--accent); }
+
+.table-wrap { overflow-x: auto; }
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+@media(max-width:600px) {
+  header { padding: 15px; }
+  .logo { font-size: 16px; }
+  nav { gap: 5px; }
+  nav button { padding: 10px; font-size: 12px; }
+  main { padding: 20px 14px 50px; }
+  .hero { padding: 40px 20px; }
+}
 </style>
-<style>
-/* V3 */
-.v3-media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
-.v3-media{background:var(--card,#151922);border:1px solid rgba(255,255,255,.10);border-radius:16px;overflow:hidden}
-.v3-media img,.v3-media iframe{width:100%;aspect-ratio:16/9;display:block;border:0;object-fit:cover}
-.v3-media .v3-cap{padding:11px 13px;font-size:.92rem}
-.v3-levels{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
-.v3-level{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:9px 13px;cursor:pointer;background:transparent;color:inherit}
-.v3-level.active{outline:2px solid currentColor}
-.v3-xp{margin:14px 0;padding:14px;border-radius:14px;background:rgba(255,255,255,.05)}
-.v3-xpbar{height:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
-.v3-xpbar>span{display:block;height:100%;width:0;background:currentColor;transition:width .3s}
-.v3-topic-card{padding:16px;border:1px solid rgba(255,255,255,.10);border-radius:16px;margin:12px 0}
-.v3-diagram{font-family:system-ui,sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:.3px}
-.v3-pill{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:.78rem;margin:2px}
-@media(max-width:650px){.v3-media-grid{grid-template-columns:1fr}}
-</style>
+</head>
 
-</head><body>
-<header><div class="wrap head"><h1>⚙️ Máquinas y Mecanismos · 4º ESO</h1><div class="sub">Versión 2 · Test · Examen · Estudiar · Tarjetas · Progreso</div></div>
-<div class="wrap"><nav>
-<button id="nTest" class="active" onclick="tab('test')">📝 Test</button><button id="nExam" onclick="tab('exam')">🎯 Modo examen</button>
-<button id="nStudy" onclick="tab('study')">📚 Estudiar</button><button id="nFlash" onclick="tab('flash')">🧠 Tarjetas</button><button id="nProg" onclick="tab('prog')">📊 Progreso</button>
-</nav></div></header>
-<main class="wrap">
-<section id="test"><div class="hero"><h2>Cuestionario</h2><div class="muted">Las 100 preguntas del cuestionario.</div><div class="progress"><div id="testbar" class="bar"></div></div><span id="testcount" class="badge">0 / 100 respondidas</span></div>
-<div id="testResult" class="card hidden"></div><div id="testQuestions"></div><div class="toolbar"><button class="btn primary" onclick="gradeFull()">✅ Corregir y poner nota</button><button class="btn" onclick="resetFull()">↻ Reiniciar</button></div></section>
+<body>
 
-<section id="exam" class="hidden"><div class="hero"><h2>🎯 Modo examen</h2><div class="muted">Selecciona 10, 20, 30 o 50 preguntas aleatorias.</div>
-<div class="toolbar"><select id="examN"><option>10</option><option>20</option><option>30</option><option>50</option></select><button class="btn primary" onclick="startExam()">Empezar examen</button><span id="timer">00:00</span></div></div><div id="examBox"></div></section>
+<header>
+  <div class="logo">⚙️ Máquinas<span>Lab</span></div>
+  <nav>
+    <button class="secondary" onclick="goTo('inicio')">Inicio</button>
+    <button class="secondary" onclick="goTo('cuestionario')">Cuestionario</button>
+    <button class="primary" onclick="goTo('cuenta')">Mi cuenta</button>
+  </nav>
+</header>
 
-<section id="study" class="hidden"><div class="hero">
-<section class="v3-topic-card" id="v3-enhancements">
-  <h2>Aprender con ejemplos</h2>
-  <p>Además de las 100 preguntas, aquí tienes una explicación visual y vídeos para entender los mecanismos principales.</p>
+<main>
 
-  <div class="v3-levels" id="v3-levels">
-    <button class="v3-level active" data-level="facil">Fácil</button>
-    <button class="v3-level" data-level="medio">Medio</button>
-    <button class="v3-level" data-level="dificil">Difícil</button>
-  </div>
-
-  <div class="v3-xp">
-    <strong>Nivel de estudio</strong>
-    <div id="v3-xp-text">0 XP · Nivel 1</div>
-    <div class="v3-xpbar"><span id="v3-xp-fill"></span></div>
-  </div>
-
-  <div class="v3-topic-card">
-    <h3>Esquema rápido de mecanismos</h3>
-    <p class="v3-diagram">Fuerza → Máquina → Mecanismo → Movimiento</p>
+<section id="inicio">
+  <div class="hero">
+    <span class="tag">TECNOLOGÍA · 4º ESO</span>
+    <h1>Máquinas y <span>Mecanismos</span></h1>
     <p>
-      <span class="v3-pill">Palanca</span>
-      <span class="v3-pill">Polea</span>
-      <span class="v3-pill">Engranajes</span>
-      <span class="v3-pill">Piñón-cremallera</span>
-      <span class="v3-pill">Tornillo-tuerca</span>
-      <span class="v3-pill">Leva</span>
-      <span class="v3-pill">Biela-manivela</span>
+      Aprende, practica y comprueba tus conocimientos sobre
+      máquinas simples, mecanismos de transmisión y transformación
+      del movimiento.
     </p>
+    <button class="primary" onclick="goTo('cuestionario')">
+      Empezar a practicar →
+    </button>
   </div>
+</section>
 
-  <div class="v3-media-grid">
-    <div class="v3-media">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Lever_principle.svg/640px-Lever_principle.svg.png" alt="Principio de palanca">
-      <div class="v3-cap"><b>Palancas</b><br>Fuerza, resistencia y punto de apoyo.</div>
-    </div>
-    <div class="v3-media">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Pulley.svg/640px-Pulley.svg.png" alt="Polea">
-      <div class="v3-cap"><b>Poleas</b><br>Sirven para transmitir o facilitar el movimiento.</div>
-    </div>
-    <div class="v3-media">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Gear_animation.gif/640px-Gear_animation.gif" alt="Engranajes">
-      <div class="v3-cap"><b>Engranajes</b><br>Transmiten movimiento mediante dientes.</div>
-    </div>
-  </div>
+<section>
+  <h2 class="section-title">¿Qué puedes hacer?</h2>
 
-  <div class="v3-media-grid">
-    <div class="v3-media">
-      <iframe src="https://www.youtube.com/embed/2P6Y0g1l1xQ" title="Máquinas y mecanismos" loading="lazy" allowfullscreen></iframe>
-      <div class="v3-cap"><b>Vídeo: máquinas y mecanismos</b><br>Repaso general.</div>
+  <div class="cards">
+    <div class="card">
+      <div class="icon">📝</div>
+      <h3>Cuestionario</h3>
+      <p>Practica las preguntas de máquinas y mecanismos de 4º ESO.</p>
+      <button class="primary" onclick="goTo('cuestionario')">
+        Practicar
+      </button>
     </div>
-    <div class="v3-media">
-      <iframe src="https://www.youtube.com/embed/0G9wT9Q8bJk" title="Mecanismos" loading="lazy" allowfullscreen></iframe>
-      <div class="v3-cap"><b>Vídeo: mecanismos</b><br>Repaso visual.</div>
+
+    <div class="card">
+      <div class="icon">📊</div>
+      <h3>Resultados</h3>
+      <p>Consulta tus intentos guardados en tu cuenta.</p>
+      <button class="secondary" onclick="goTo('resultados')">
+        Ver resultados
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="icon">👤</div>
+      <h3>Cuenta personal</h3>
+      <p>Regístrate para guardar tus resultados y acceder desde otros dispositivos.</p>
+      <button class="secondary" onclick="goTo('cuenta')">
+        Mi cuenta
+      </button>
     </div>
   </div>
 </section>
 
-<h2>📚 Estudiar</h2><div class="muted">Busca por número, palabra o tema y abre cada respuesta.</div></div>
-<div class="toolbar"><input id="studySearch" oninput="renderStudy()" placeholder="🔎 Buscar..."><select id="topicFilter" onchange="renderStudy()"><option value="">Todos los temas</option></select></div><div id="studyList"></div></section>
+<section id="cuenta">
+  <h2 class="section-title">Mi cuenta</h2>
 
-<section id="flash" class="hidden"><div class="hero"><h2>🧠 Tarjetas de memoria</h2><div class="muted">Piensa la respuesta antes de descubrirla.</div></div>
-<div class="card"><div id="flashCard" class="flash"></div><div class="toolbar"><button onclick="prevFlash()">← Anterior</button><span id="flashCount"></span><button onclick="nextFlash()">Siguiente →</button></div></div></section>
+  <div class="panel">
+    <div id="userInfo" class="hidden">
+      <h3>¡Ya has iniciado sesión!</h3>
+      <p id="userEmail"></p>
+      <button class="danger" onclick="logout()">Cerrar sesión</button>
+    </div>
 
-<section id="prog" class="hidden"><div class="hero"><h2>📊 Tu progreso</h2><div class="muted">Los resultados se guardan en este navegador.</div></div><div id="stats" class="grid"></div><div class="card"><h3>Resultados recientes</h3><div id="history"></div><button onclick="clearProgress()">Borrar progreso</button></div></section>
-</main><footer>Contenido basado en el cuestionario proporcionado.</footer>
+    <div id="authForm">
+      <h3>Iniciar sesión o registrarse</h3>
+      <p style="color:var(--muted)">
+        Utiliza tu correo electrónico para guardar tus resultados.
+      </p>
+
+      <label for="email">Correo electrónico</label>
+      <input id="email" type="email" placeholder="nombre@correo.com">
+
+      <label for="password">Contraseña</label>
+      <input id="password" type="password" placeholder="Contraseña">
+
+      <button class="primary" onclick="login()">Iniciar sesión</button>
+      <button class="secondary" onclick="register()">Crear cuenta</button>
+
+      <div id="authMessage"></div>
+    </div>
+  </div>
+</section>
+
+<section id="cuestionario">
+  <h2 class="section-title">Cuestionario de máquinas y mecanismos</h2>
+
+  <div class="panel">
+    <div id="quizStart">
+      <h3>Practica para tu examen</h3>
+      <p style="color:var(--muted);line-height:1.7">
+        El cuestionario utiliza las preguntas del documento de
+        Máquinas y Mecanismos de 4º ESO. En esta versión podrás
+        responderlas y revisar tus respuestas. Como el PDF original
+        contiene los enunciados, pero no una plantilla de soluciones,
+        las respuestas se revisan por el estudiante.
+      </p>
+
+      <label for="questionCount">Número de preguntas</label>
+      <select id="questionCount">
+        <option value="10">10 preguntas</option>
+        <option value="25">25 preguntas</option>
+        <option value="50">50 preguntas</option>
+        <option value="100">100 preguntas</option>
+      </select>
+
+      <button class="primary" onclick="startQuiz()">Comenzar cuestionario</button>
+    </div>
+
+    <div id="quizArea" class="hidden">
+      <div class="quiz-top">
+        <span id="questionNumber"></span>
+        <span id="answeredNumber"></span>
+      </div>
+
+      <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div id="questionText" class="question"></div>
+
+      <label for="answer">Tu respuesta</label>
+      <textarea id="answer" class="answer-area"
+        placeholder="Escribe aquí tu respuesta..."></textarea>
+
+      <div class="quiz-actions">
+        <button class="secondary" onclick="previousQuestion()">← Anterior</button>
+        <button class="secondary" onclick="nextQuestion()">Siguiente →</button>
+      </div>
+
+      <div style="margin-top:25px">
+        <button class="primary" onclick="finishQuiz()">Terminar cuestionario</button>
+        <button class="secondary" onclick="cancelQuiz()">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="quizResult" class="hidden">
+      <h3>Cuestionario terminado</h3>
+      <p>Has completado:</p>
+      <div class="result-number" id="completedNumber">0/0</div>
+      <p id="completionMessage"></p>
+      <p style="color:var(--muted)">
+        Este resultado representa las preguntas contestadas, no una
+        nota corregida automáticamente. Revisa las respuestas con tus
+        apuntes o con el profesor.
+      </p>
+      <button class="primary" onclick="saveResult()">Guardar resultado</button>
+      <button class="secondary" onclick="startQuiz()">Volver a practicar</button>
+      <div id="saveMessage"></div>
+    </div>
+  </div>
+</section>
+
+<section id="resultados">
+  <h2 class="section-title">Mis resultados</h2>
+
+  <div class="panel">
+    <p style="color:var(--muted)">
+      Inicia sesión para consultar los resultados guardados en tu cuenta.
+    </p>
+
+    <button class="primary" onclick="loadResults()">Actualizar resultados</button>
+
+    <div id="resultsMessage"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Contestadas</th>
+            <th>Total</th>
+            <th>Porcentaje</th>
+          </tr>
+        </thead>
+        <tbody id="resultsTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>MáquinasLab · Proyecto de Tecnología · 4º ESO</p>
+  <p>Aprende cómo funcionan las máquinas y los mecanismos.</p>
+</footer>
+
 <script>
-const data=[{"id": 1, "q": "¿Qué es una fuerza?", "options": ["Una fuerza es una interacción capaz de cambiar el movimiento de un cuerpo o deformarlo.", "Dirección, sentido e intensidad (magnitud).", "Es el punto alrededor del cual gira una palanca.", "La correa."], "correct": 0, "answer": "Una fuerza es una interacción capaz de cambiar el movimiento de un cuerpo o deformarlo.", "topic": "Fundamentos y máquinas simples", "explanation": "Una fuerza es una interacción capaz de cambiar el movimiento de un cuerpo o deformarlo."}, {"id": 2, "q": "¿Qué tres características definen una fuerza?", "options": ["Piñón-cremallera.", "Dirección, sentido e intensidad (magnitud).", "Movimiento circular.", "Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento."], "correct": 1, "answer": "Dirección, sentido e intensidad (magnitud).", "topic": "Fundamentos y máquinas simples", "explanation": "Dirección, sentido e intensidad (magnitud)."}, {"id": 3, "q": "¿Cuál es la unidad de medida de la fuerza en el Sistema Internacional?", "options": ["Las ruedas giran en sentidos contrarios.", "Una biela y una manivela.", "El newton (N).", "Entre la fuerza y la resistencia."], "correct": 2, "answer": "El newton (N).", "topic": "Fundamentos y máquinas simples", "explanation": "El newton (N)."}, {"id": 4, "q": "¿Qué diferencia hay entre masa y peso?", "options": ["Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria.", "Un piñón y una cremallera.", "El valor o intensidad de la fuerza.", "La masa es la cantidad de materia y se mide en kg; el peso es una fuerza y se mide en N: P = m·g."], "correct": 3, "answer": "La masa es la cantidad de materia y se mide en kg; el peso es una fuerza y se mide en N: P = m·g.", "topic": "Fundamentos y máquinas simples", "explanation": "La masa es la cantidad de materia y se mide en kg; el peso es una fuerza y se mide en N: P = m·g."}, {"id": 5, "q": "¿Qué es una máquina?", "options": ["Un dispositivo que facilita la realización de un trabajo, normalmente modificando o transmitiendo fuerzas y movimientos.", "Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes.", "Movimiento rectilíneo alternativo.", "Un sistema de poleas o polipasto."], "correct": 0, "answer": "Un dispositivo que facilita la realización de un trabajo, normalmente modificando o transmitiendo fuerzas y movimientos.", "topic": "Fundamentos y máquinas simples", "explanation": "Un dispositivo que facilita la realización de un trabajo, normalmente modificando o transmitiendo fuerzas y movimientos."}, {"id": 6, "q": "¿Qué son los mecanismos?", "options": ["Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro.", "Conjunto de elementos que transmiten o transforman el movimiento y las fuerzas dentro de una máquina.", "Piñón-cremallera.", "Movimiento rectilíneo alternativo."], "correct": 1, "answer": "Conjunto de elementos que transmiten o transforman el movimiento y las fuerzas dentro de una máquina.", "topic": "Fundamentos y máquinas simples", "explanation": "Conjunto de elementos que transmiten o transforman el movimiento y las fuerzas dentro de una máquina."}, {"id": 7, "q": "¿Qué diferencia existe entre máquinas simples y máquinas complejas?", "options": ["Movimiento circular.", "Piñón-cremallera.", "Una simple tiene pocos elementos y realiza una función básica; una compleja combina mecanismos para realizar tareas más elaboradas.", "Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas."], "correct": 2, "answer": "Una simple tiene pocos elementos y realiza una función básica; una compleja combina mecanismos para realizar tareas más elaboradas.", "topic": "Fundamentos y máquinas simples", "explanation": "Una simple tiene pocos elementos y realiza una función básica; una compleja combina mecanismos para realizar tareas más elaboradas."}, {"id": 8, "q": "Nombra las tres máquinas simples básicas.", "options": ["El elemento motriz.", "Aumenta la velocidad de salida y normalmente disminuye el par.", "El mecanismo biela-manivela.", "Palanca, polea y plano inclinado."], "correct": 3, "answer": "Palanca, polea y plano inclinado.", "topic": "Fundamentos y máquinas simples", "explanation": "Palanca, polea y plano inclinado."}, {"id": 9, "q": "¿Qué tipo de movimiento realiza una rueda?", "options": ["Movimiento circular.", "La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad.", "Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada.", "Una máquina simple basada en el plano inclinado."], "correct": 0, "answer": "Movimiento circular.", "topic": "Movimientos y mecanismos", "explanation": "Movimiento circular."}, {"id": 10, "q": "¿Qué tipo de movimiento tiene una puerta corredera?", "options": ["Una transmisión por correa y poleas.", "Movimiento rectilíneo.", "El engranaje helicoidal, porque el contacto entre dientes es más progresivo.", "El mecanismo biela-manivela."], "correct": 1, "answer": "Movimiento rectilíneo.", "topic": "Movimientos y mecanismos", "explanation": "Movimiento rectilíneo."}, {"id": 11, "q": "¿Qué es un movimiento alternativo?", "options": ["Movimiento de giro y, al avanzar, movimiento lineal de penetración.", "El elemento móvil o parte móvil.", "Es un movimiento de ida y vuelta repetido entre dos posiciones.", "Un tornillo-tuerca o un mecanismo de husillo, según el tipo de gato."], "correct": 2, "answer": "Es un movimiento de ida y vuelta repetido entre dos posiciones.", "topic": "Movimientos y mecanismos", "explanation": "Es un movimiento de ida y vuelta repetido entre dos posiciones."}, {"id": 12, "q": "¿Qué hace un mecanismo de transmisión?", "options": ["La biela.", "Un sistema de rodillos, normalmente de fricción o motorizados, que arrastran el papel.", "Un dispositivo que facilita la realización de un trabajo, normalmente modificando o transmitiendo fuerzas y movimientos.", "Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo."], "correct": 3, "answer": "Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo.", "topic": "Movimientos y mecanismos", "explanation": "Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo."}, {"id": 13, "q": "¿Qué hace un mecanismo de transformación?", "options": ["Transforma un tipo de movimiento en otro diferente.", "Movimiento rectilíneo vertical.", "El engranaje helicoidal.", "Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo."], "correct": 0, "answer": "Transforma un tipo de movimiento en otro diferente.", "topic": "Movimientos y mecanismos", "explanation": "Transforma un tipo de movimiento en otro diferente."}, {"id": 14, "q": "Escribe la ley de la palanca.", "options": ["Una carretilla.", "Fuerza × brazo de fuerza = Resistencia × brazo de resistencia (F·dF = R·dR).", "El tambor o cilindro.", "Conjunto de elementos que transmiten o transforman el movimiento y las fuerzas dentro de una máquina."], "correct": 1, "answer": "Fuerza × brazo de fuerza = Resistencia × brazo de resistencia (F·dF = R·dR).", "topic": "Palancas", "explanation": "Fuerza × brazo de fuerza = Resistencia × brazo de resistencia (F·dF = R·dR)."}, {"id": 15, "q": "¿Qué es el punto de apoyo o fulcro?", "options": ["Transforma un tipo de movimiento en otro diferente.", "Giran en sentidos contrarios.", "Es el punto alrededor del cual gira una palanca.", "Piñón-cremallera."], "correct": 2, "answer": "Es el punto alrededor del cual gira una palanca.", "topic": "Palancas", "explanation": "Es el punto alrededor del cual gira una palanca."}, {"id": 16, "q": "¿Dónde se encuentra el punto de apoyo en una palanca de primer grado?", "options": ["Una simple tiene pocos elementos y realiza una función básica; una compleja combina mecanismos para realizar tareas más elaboradas.", "Unas pinzas o unas pinzas de depilar.", "Para transmitir movimiento entre ejes que normalmente son perpendiculares y conseguir una gran reducción de velocidad.", "Entre la fuerza y la resistencia."], "correct": 3, "answer": "Entre la fuerza y la resistencia.", "topic": "Palancas", "explanation": "Entre la fuerza y la resistencia."}, {"id": 17, "q": "¿Dónde se encuentra la resistencia en una palanca de segundo grado?", "options": ["Entre el fulcro y la fuerza.", "Fuerza × brazo de fuerza = Resistencia × brazo de resistencia (F·dF = R·dR).", "La correa.", "Movimiento alternativo o de vaivén."], "correct": 0, "answer": "Entre el fulcro y la fuerza.", "topic": "Palancas", "explanation": "Entre el fulcro y la fuerza."}, {"id": 18, "q": "¿Dónde se encuentra la fuerza en una palanca de tercer grado?", "options": ["P = m·g.", "Entre el fulcro y la resistencia.", "Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento.", "Piñón-cremallera."], "correct": 1, "answer": "Entre el fulcro y la resistencia.", "topic": "Palancas", "explanation": "Entre el fulcro y la resistencia."}, {"id": 19, "q": "Escribe un ejemplo de palanca de primer grado.", "options": ["Una biela y una manivela.", "Un torno, normalmente asociado a una polea o sistema de elevación.", "Unas tijeras o un balancín.", "Las ruedas giran en sentidos contrarios."], "correct": 2, "answer": "Unas tijeras o un balancín.", "topic": "Palancas", "explanation": "Unas tijeras o un balancín."}, {"id": 20, "q": "Escribe un ejemplo de palanca de segundo grado.", "options": ["Un piñón y una cremallera.", "El valor o intensidad de la fuerza.", "La rueda que recibe el movimiento de la rueda motriz.", "Una carretilla."], "correct": 3, "answer": "Una carretilla.", "topic": "Palancas", "explanation": "Una carretilla."}, {"id": 21, "q": "Escribe un ejemplo de palanca de tercer grado.", "options": ["Unas pinzas o unas pinzas de depilar.", "Movimiento rectilíneo alternativo.", "Un sistema de poleas o polipasto.", "Puede conseguir una gran reducción de velocidad y puede dificultar la transmisión inversa, según el sistema."], "correct": 0, "answer": "Unas pinzas o unas pinzas de depilar.", "topic": "Palancas", "explanation": "Unas pinzas o unas pinzas de depilar."}, {"id": 22, "q": "¿Qué es una polea?", "options": ["Porque su geometría está diseñada para que el movimiento del seguidor no se transmita fácilmente en sentido contrario.", "Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento.", "Movimiento rectilíneo alternativo.", "Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro."], "correct": 1, "answer": "Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento.", "topic": "Poleas y ruedas de fricción", "explanation": "Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento."}, {"id": 23, "q": "¿Qué ventaja tiene una polea fija?", "options": ["Piñón-cremallera.", "El plano inclinado.", "Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria.", "Movimiento circular."], "correct": 2, "answer": "Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria.", "topic": "Poleas y ruedas de fricción", "explanation": "Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria."}, {"id": 24, "q": "¿Qué ventaja tiene una polea móvil?", "options": ["Aumenta la velocidad de salida y normalmente disminuye el par.", "El mecanismo biela-manivela.", "Un conjunto de engranajes, generalmente para transmitir y regular el movimiento de las agujas.", "Reduce la fuerza necesaria para levantar una carga, idealmente aproximadamente a la mitad con una sola polea móvil."], "correct": 3, "answer": "Reduce la fuerza necesaria para levantar una carga, idealmente aproximadamente a la mitad con una sola polea móvil.", "topic": "Poleas y ruedas de fricción", "explanation": "Reduce la fuerza necesaria para levantar una carga, idealmente aproximadamente a la mitad con una sola polea móvil."}, {"id": 25, "q": "¿Qué es un polipasto?", "options": ["Conjunto de poleas que permite reducir considerablemente el esfuerzo para elevar cargas.", "Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada.", "Una máquina simple basada en el plano inclinado.", "El bastidor o estructura fija."], "correct": 0, "answer": "Conjunto de poleas que permite reducir considerablemente el esfuerzo para elevar cargas.", "topic": "Poleas y ruedas de fricción", "explanation": "Conjunto de poleas que permite reducir considerablemente el esfuerzo para elevar cargas."}, {"id": 26, "q": "¿Qué son las ruedas de fricción?", "options": ["La masa es la cantidad de materia y se mide en kg; el peso es una fuerza y se mide en N: P = m·g.", "Ruedas que transmiten movimiento por contacto directo entre sus superficies.", "El mecanismo biela-manivela.", "Una transmisión por correa y poleas."], "correct": 1, "answer": "Ruedas que transmiten movimiento por contacto directo entre sus superficies.", "topic": "Poleas y ruedas de fricción", "explanation": "Ruedas que transmiten movimiento por contacto directo entre sus superficies."}, {"id": 27, "q": "¿Qué ocurre con el sentido de giro en dos ruedas de fricción?", "options": ["El elemento móvil o parte móvil.", "Es un movimiento de ida y vuelta repetido entre dos posiciones.", "Giran en sentidos contrarios.", "Movimiento de giro y, al avanzar, movimiento lineal de penetración."], "correct": 2, "answer": "Giran en sentidos contrarios.", "topic": "Poleas y ruedas de fricción", "explanation": "Giran en sentidos contrarios."}, {"id": 28, "q": "¿Qué elemento transmite el movimiento en un sistema de poleas con correa?", "options": ["Un sistema de rodillos, normalmente de fricción o motorizados, que arrastran el papel.", "Un dispositivo que facilita la realización de un trabajo, normalmente modificando o transmitiendo fuerzas y movimientos.", "Entre el fulcro y la resistencia.", "La correa."], "correct": 3, "answer": "La correa.", "topic": "Poleas y ruedas de fricción", "explanation": "La correa."}, {"id": 29, "q": "¿Qué ocurre si la correa está cruzada?", "options": ["Las ruedas giran en sentidos contrarios.", "El engranaje helicoidal.", "Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo.", "Conjunto de poleas que permite reducir considerablemente el esfuerzo para elevar cargas."], "correct": 0, "answer": "Las ruedas giran en sentidos contrarios.", "topic": "Poleas y ruedas de fricción", "explanation": "Las ruedas giran en sentidos contrarios."}, {"id": 30, "q": "¿Qué son los engranajes?", "options": ["Rectos o cilíndricos, helicoidales, cónicos y sinfín-corona, entre otros.", "Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes.", "Conjunto de elementos que transmiten o transforman el movimiento y las fuerzas dentro de una máquina.", "Unas tijeras o un balancín."], "correct": 1, "answer": "Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes.", "topic": "Engranajes", "explanation": "Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes."}, {"id": 31, "q": "¿Cómo se llaman los salientes de los engranajes?", "options": ["Ruedas que transmiten movimiento por contacto directo entre sus superficies.", "Elemento con un perfil que, al girar, hace subir y bajar o desplazar a un seguidor.", "Dientes.", "Transforma un tipo de movimiento en otro diferente."], "correct": 2, "answer": "Dientes.", "topic": "Engranajes", "explanation": "Dientes."}, {"id": 32, "q": "¿Qué transmiten los engranajes?", "options": ["Una carretilla.", "Para transmitir movimiento entre ejes que normalmente son perpendiculares y conseguir una gran reducción de velocidad.", "La fuerza de la gravedad.", "Movimiento y fuerza entre ejes, pudiendo cambiar velocidad y sentido de giro."], "correct": 3, "answer": "Movimiento y fuerza entre ejes, pudiendo cambiar velocidad y sentido de giro.", "topic": "Engranajes", "explanation": "Movimiento y fuerza entre ejes, pudiendo cambiar velocidad y sentido de giro."}, {"id": 33, "q": "¿Qué tipos de engranajes aparecen en el tema?", "options": ["Rectos o cilíndricos, helicoidales, cónicos y sinfín-corona, entre otros.", "Giran en sentidos contrarios.", "Movimiento alternativo o de vaivén.", "Máquina que enrolla una cuerda o cable alrededor de un tambor para elevar o mover cargas."], "correct": 0, "answer": "Rectos o cilíndricos, helicoidales, cónicos y sinfín-corona, entre otros.", "topic": "Engranajes", "explanation": "Rectos o cilíndricos, helicoidales, cónicos y sinfín-corona, entre otros."}, {"id": 34, "q": "¿Para qué sirve un tornillo sinfín?", "options": ["La rueda que recibe el movimiento del motor o elemento de entrada.", "Para transmitir movimiento entre ejes que normalmente son perpendiculares y conseguir una gran reducción de velocidad.", "Piñón-cremallera.", "P = m·g."], "correct": 1, "answer": "Para transmitir movimiento entre ejes que normalmente son perpendiculares y conseguir una gran reducción de velocidad.", "topic": "Engranajes", "explanation": "Para transmitir movimiento entre ejes que normalmente son perpendiculares y conseguir una gran reducción de velocidad."}, {"id": 35, "q": "¿Qué mecanismo transforma movimiento circular en lineal mediante una barra dentada?", "options": ["Un torno, normalmente asociado a una polea o sistema de elevación.", "Un mecanismo de tornillo sinfín y rueda dentada.", "Piñón-cremallera.", "Una biela y una manivela."], "correct": 2, "answer": "Piñón-cremallera.", "topic": "Piñón-cremallera y tornillo-tuerca", "explanation": "Piñón-cremallera."}, {"id": 36, "q": "¿Qué dos elementos forman el mecanismo piñón-cremallera?", "options": ["El valor o intensidad de la fuerza.", "La rueda que recibe el movimiento de la rueda motriz.", "Movimiento alternativo o de vaivén.", "Un piñón y una cremallera."], "correct": 3, "answer": "Un piñón y una cremallera.", "topic": "Piñón-cremallera y tornillo-tuerca", "explanation": "Un piñón y una cremallera."}, {"id": 37, "q": "¿Qué mecanismo utiliza un coche para la dirección?", "options": ["Piñón-cremallera.", "Un sistema de poleas o polipasto.", "Puede conseguir una gran reducción de velocidad y puede dificultar la transmisión inversa, según el sistema.", "La palanca."], "correct": 0, "answer": "Piñón-cremallera.", "topic": "Piñón-cremallera y tornillo-tuerca", "explanation": "Piñón-cremallera."}, {"id": 38, "q": "¿Qué mecanismo está formado por un husillo y una tuerca?", "options": ["El mecanismo biela-manivela.", "Tornillo-tuerca.", "Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro.", "Porque su geometría está diseñada para que el movimiento del seguidor no se transmita fácilmente en sentido contrario."], "correct": 1, "answer": "Tornillo-tuerca.", "topic": "Piñón-cremallera y tornillo-tuerca", "explanation": "Tornillo-tuerca."}, {"id": 39, "q": "¿Qué movimiento transforma el mecanismo tornillo-tuerca?", "options": ["El plano inclinado.", "El mecanismo biela-manivela.", "Movimiento circular en lineal (y puede bloquearse según el sistema).", "Piñón-cremallera."], "correct": 2, "answer": "Movimiento circular en lineal (y puede bloquearse según el sistema).", "topic": "Piñón-cremallera y tornillo-tuerca", "explanation": "Movimiento circular en lineal (y puede bloquearse según el sistema)."}, {"id": 40, "q": "¿Qué es una leva?", "options": ["El mecanismo biela-manivela.", "Un conjunto de engranajes, generalmente para transmitir y regular el movimiento de las agujas.", "El newton (N).", "Elemento con un perfil que, al girar, hace subir y bajar o desplazar a un seguidor."], "correct": 3, "answer": "Elemento con un perfil que, al girar, hace subir y bajar o desplazar a un seguidor.", "topic": "Levas y biela-manivela", "explanation": "Elemento con un perfil que, al girar, hace subir y bajar o desplazar a un seguidor."}, {"id": 41, "q": "¿Qué tipo de movimiento produce una excéntrica?", "options": ["Movimiento alternativo o de vaivén.", "Una máquina simple basada en el plano inclinado.", "El bastidor o estructura fija.", "Movimiento rectilíneo."], "correct": 0, "answer": "Movimiento alternativo o de vaivén.", "topic": "Levas y biela-manivela", "explanation": "Movimiento alternativo o de vaivén."}, {"id": 42, "q": "¿Qué elementos forman el mecanismo biela-manivela?", "options": ["Entre el fulcro y la fuerza.", "Una biela y una manivela.", "Una transmisión por correa y poleas.", "La masa es la cantidad de materia y se mide en kg; el peso es una fuerza y se mide en N: P = m·g."], "correct": 1, "answer": "Una biela y una manivela.", "topic": "Levas y biela-manivela", "explanation": "Una biela y una manivela."}, {"id": 43, "q": "¿Qué movimiento realiza el pistón en el sistema biela-manivela?", "options": ["Es un movimiento de ida y vuelta repetido entre dos posiciones.", "Reduce la fuerza necesaria para levantar una carga, idealmente aproximadamente a la mitad con una sola polea móvil.", "Movimiento rectilíneo alternativo.", "El elemento móvil o parte móvil."], "correct": 2, "answer": "Movimiento rectilíneo alternativo.", "topic": "Levas y biela-manivela", "explanation": "Movimiento rectilíneo alternativo."}, {"id": 44, "q": "¿Qué es un cigüeñal?", "options": ["Un dispositivo que facilita la realización de un trabajo, normalmente modificando o transmitiendo fuerzas y movimientos.", "Entre el fulcro y la resistencia.", "Dientes.", "Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas."], "correct": 3, "answer": "Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas.", "topic": "Levas y biela-manivela", "explanation": "Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas."}, {"id": 45, "q": "¿Para qué sirve un cigüeñal en un motor?", "options": ["Transformar el movimiento alternativo de los pistones en giro y transmitirlo al sistema de salida.", "Transmite movimiento de un elemento a otro sin cambiar necesariamente su tipo.", "Conjunto de poleas que permite reducir considerablemente el esfuerzo para elevar cargas.", "Tornillo-tuerca."], "correct": 0, "answer": "Transformar el movimiento alternativo de los pistones en giro y transmitirlo al sistema de salida.", "topic": "Levas y biela-manivela", "explanation": "Transformar el movimiento alternativo de los pistones en giro y transmitirlo al sistema de salida."}, {"id": 46, "q": "¿Qué significa que una máquina reduzca el esfuerzo?", "options": ["Transformar el movimiento alternativo de los pistones en giro y transmitirlo al sistema de salida.", "Que permite realizar la misma tarea aplicando una fuerza menor, a cambio de recorrer una mayor distancia o mediante una ventaja mecánica.", "Unas tijeras o un balancín.", "Movimiento y fuerza entre ejes, pudiendo cambiar velocidad y sentido de giro."], "correct": 1, "answer": "Que permite realizar la misma tarea aplicando una fuerza menor, a cambio de recorrer una mayor distancia o mediante una ventaja mecánica.", "topic": "Fuerzas y movimientos", "explanation": "Que permite realizar la misma tarea aplicando una fuerza menor, a cambio de recorrer una mayor distancia o mediante una ventaja mecánica."}, {"id": 47, "q": "¿Qué fuerza atrae los cuerpos hacia la Tierra?", "options": ["Movimiento circular en lineal (y puede bloquearse según el sistema).", "Transforma el giro de la manivela en un movimiento adecuado para el mecanismo, según el sistema.", "La fuerza de la gravedad.", "Ruedas que transmiten movimiento por contacto directo entre sus superficies."], "correct": 2, "answer": "La fuerza de la gravedad.", "topic": "Fuerzas y movimientos", "explanation": "La fuerza de la gravedad."}, {"id": 48, "q": "¿Cómo se representa matemáticamente el peso?", "options": ["Rectos o cilíndricos, helicoidales, cónicos y sinfín-corona, entre otros.", "Que permite realizar la misma tarea aplicando una fuerza menor, a cambio de recorrer una mayor distancia o mediante una ventaja mecánica.", "Revoluciones por minuto (rpm).", "P = m·g."], "correct": 3, "answer": "P = m·g.", "topic": "Fuerzas y movimientos", "explanation": "P = m·g."}, {"id": 49, "q": "¿Qué significa “magnitud” de una fuerza?", "options": ["El valor o intensidad de la fuerza.", "Elemento con un perfil que, al girar, hace subir y bajar o desplazar a un seguidor.", "Máquina que enrolla una cuerda o cable alrededor de un tambor para elevar o mover cargas.", "Un sistema de cadena y ruedas dentadas (piñones)."], "correct": 0, "answer": "El valor o intensidad de la fuerza.", "topic": "Fuerzas y movimientos", "explanation": "El valor o intensidad de la fuerza."}, {"id": 50, "q": "¿Qué movimiento realiza la hoja de una sierra de calar?", "options": ["Un sistema de motor con transmisión por engranajes, cadena o correa, según el diseño.", "Movimiento rectilíneo alternativo.", "La fuerza de la gravedad.", "La rueda que recibe el movimiento del motor o elemento de entrada."], "correct": 1, "answer": "Movimiento rectilíneo alternativo.", "topic": "Fuerzas y movimientos", "explanation": "Movimiento rectilíneo alternativo."}, {"id": 51, "q": "¿Qué elemento produce el movimiento en un mecanismo?", "options": ["Un mecanismo de tornillo sinfín y rueda dentada.", "Un polipasto.", "El elemento motriz.", "Un torno, normalmente asociado a una polea o sistema de elevación."], "correct": 2, "answer": "El elemento motriz.", "topic": "Elementos y mecanismos de elevación", "explanation": "El elemento motriz."}, {"id": 52, "q": "¿Cómo se llama el elemento que recibe el movimiento?", "options": ["La rueda que recibe el movimiento de la rueda motriz.", "Movimiento alternativo o de vaivén.", "Los dientes.", "El elemento conducido."], "correct": 3, "answer": "El elemento conducido.", "topic": "Elementos y mecanismos de elevación", "explanation": "El elemento conducido."}, {"id": 53, "q": "¿Qué movimiento transforma una manivela?", "options": ["Transforma el giro de la manivela en un movimiento adecuado para el mecanismo, según el sistema.", "Puede conseguir una gran reducción de velocidad y puede dificultar la transmisión inversa, según el sistema.", "La palanca.", "Movimiento rectilíneo alternativo."], "correct": 0, "answer": "Transforma el giro de la manivela en un movimiento adecuado para el mecanismo, según el sistema.", "topic": "Elementos y mecanismos de elevación", "explanation": "Transforma el giro de la manivela en un movimiento adecuado para el mecanismo, según el sistema."}, {"id": 54, "q": "¿Qué es un torno?", "options": ["Dirección, sentido e intensidad (magnitud).", "Máquina que enrolla una cuerda o cable alrededor de un tambor para elevar o mover cargas.", "Porque su geometría está diseñada para que el movimiento del seguidor no se transmita fácilmente en sentido contrario.", "El mecanismo biela-manivela."], "correct": 1, "answer": "Máquina que enrolla una cuerda o cable alrededor de un tambor para elevar o mover cargas.", "topic": "Elementos y mecanismos de elevación", "explanation": "Máquina que enrolla una cuerda o cable alrededor de un tambor para elevar o mover cargas."}, {"id": 55, "q": "¿Qué mecanismo utilizan muchos pozos para sacar agua?", "options": ["El mecanismo biela-manivela.", "Movimiento circular.", "Un torno, normalmente asociado a una polea o sistema de elevación.", "El plano inclinado."], "correct": 2, "answer": "Un torno, normalmente asociado a una polea o sistema de elevación.", "topic": "Elementos y mecanismos de elevación", "explanation": "Un torno, normalmente asociado a una polea o sistema de elevación."}, {"id": 56, "q": "¿Qué mecanismo se usa en las grúas para elevar cargas?", "options": ["Un conjunto de engranajes, generalmente para transmitir y regular el movimiento de las agujas.", "El newton (N).", "Entre la fuerza y la resistencia.", "Un sistema de poleas o polipasto."], "correct": 3, "answer": "Un sistema de poleas o polipasto.", "topic": "Elementos y mecanismos de elevación", "explanation": "Un sistema de poleas o polipasto."}, {"id": 57, "q": "¿Qué movimiento produce una polea?", "options": ["Movimiento circular.", "El bastidor o estructura fija.", "Movimiento rectilíneo.", "Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria."], "correct": 0, "answer": "Movimiento circular.", "topic": "Elementos y mecanismos de elevación", "explanation": "Movimiento circular."}, {"id": 58, "q": "¿Qué ocurre con la fuerza necesaria en una polea móvil?", "options": ["Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes.", "La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad.", "La masa es la cantidad de materia y se mide en kg; el peso es una fuerza y se mide en N: P = m·g.", "Entre el fulcro y la fuerza."], "correct": 1, "answer": "La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad.", "topic": "Elementos y mecanismos de elevación", "explanation": "La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad."}, {"id": 59, "q": "¿Qué significa relación de transmisión?", "options": ["Reduce la fuerza necesaria para levantar una carga, idealmente aproximadamente a la mitad con una sola polea móvil.", "Piñón-cremallera.", "Es la relación entre la velocidad de giro de entrada y la de salida.", "Es un movimiento de ida y vuelta repetido entre dos posiciones."], "correct": 2, "answer": "Es la relación entre la velocidad de giro de entrada y la de salida.", "topic": "Transmisión y relación de transmisión", "explanation": "Es la relación entre la velocidad de giro de entrada y la de salida."}, {"id": 60, "q": "¿En qué unidad se mide la velocidad de giro de las ruedas?", "options": ["Entre el fulcro y la resistencia.", "Dientes.", "Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas.", "Revoluciones por minuto (rpm)."], "correct": 3, "answer": "Revoluciones por minuto (rpm).", "topic": "Transmisión y relación de transmisión", "explanation": "Revoluciones por minuto (rpm)."}, {"id": 61, "q": "¿Qué es una rueda motriz?", "options": ["La rueda que recibe el movimiento del motor o elemento de entrada.", "Conjunto de poleas que permite reducir considerablemente el esfuerzo para elevar cargas.", "Tornillo-tuerca.", "El elemento motriz."], "correct": 0, "answer": "La rueda que recibe el movimiento del motor o elemento de entrada.", "topic": "Transmisión y relación de transmisión", "explanation": "La rueda que recibe el movimiento del motor o elemento de entrada."}, {"id": 62, "q": "¿Qué es una rueda conducida?", "options": ["La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad.", "La rueda que recibe el movimiento de la rueda motriz.", "Movimiento y fuerza entre ejes, pudiendo cambiar velocidad y sentido de giro.", "Transformar el movimiento alternativo de los pistones en giro y transmitirlo al sistema de salida."], "correct": 1, "answer": "La rueda que recibe el movimiento de la rueda motriz.", "topic": "Transmisión y relación de transmisión", "explanation": "La rueda que recibe el movimiento de la rueda motriz."}, {"id": 63, "q": "¿Qué ocurre en un sistema reductor?", "options": ["El elemento conducido.", "Los engranajes cónicos.", "Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro.", "Movimiento circular en lineal (y puede bloquearse según el sistema)."], "correct": 2, "answer": "Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro.", "topic": "Transmisión y relación de transmisión", "explanation": "Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro."}, {"id": 64, "q": "¿Qué ocurre en un sistema multiplicador?", "options": ["Que permite realizar la misma tarea aplicando una fuerza menor, a cambio de recorrer una mayor distancia o mediante una ventaja mecánica.", "Es la relación entre la velocidad de giro de entrada y la de salida.", "Un tornillo-tuerca o husillo.", "Aumenta la velocidad de salida y normalmente disminuye el par."], "correct": 3, "answer": "Aumenta la velocidad de salida y normalmente disminuye el par.", "topic": "Transmisión y relación de transmisión", "explanation": "Aumenta la velocidad de salida y normalmente disminuye el par."}, {"id": 65, "q": "¿Qué tipo de engranaje es más silencioso?", "options": ["El engranaje helicoidal, porque el contacto entre dientes es más progresivo.", "Transforma el giro de la manivela en un movimiento adecuado para el mecanismo, según el sistema.", "Un sistema de cadena y ruedas dentadas (piñones).", "El giro del cigüeñal se obtiene a partir del movimiento alternativo de los pistones; también puede describirse como la conversión entre giro y movimiento alternativo."], "correct": 0, "answer": "El engranaje helicoidal, porque el contacto entre dientes es más progresivo.", "topic": "Engranajes, bicicletas y sinfín", "explanation": "El engranaje helicoidal, porque el contacto entre dientes es más progresivo."}, {"id": 66, "q": "¿Qué engranajes transmiten movimiento entre ejes perpendiculares?", "options": ["Aumenta el momento de la fuerza y se necesita menos fuerza para equilibrar la misma resistencia.", "Los engranajes cónicos.", "Revoluciones por minuto (rpm).", "Un sistema de motor con transmisión por engranajes, cadena o correa, según el diseño."], "correct": 1, "answer": "Los engranajes cónicos.", "topic": "Engranajes, bicicletas y sinfín", "explanation": "Los engranajes cónicos."}, {"id": 67, "q": "¿Qué mecanismo utilizan las bicicletas para transmitir movimiento?", "options": ["Un polipasto.", "Revoluciones por minuto.", "Un sistema de cadena y ruedas dentadas (piñones).", "Un mecanismo de tornillo sinfín y rueda dentada."], "correct": 2, "answer": "Un sistema de cadena y ruedas dentadas (piñones).", "topic": "Engranajes, bicicletas y sinfín", "explanation": "Un sistema de cadena y ruedas dentadas (piñones)."}, {"id": 68, "q": "¿Qué mecanismo aparece en las clavijas de una guitarra?", "options": ["Movimiento alternativo o de vaivén.", "Los dientes.", "Una fuerza es una interacción capaz de cambiar el movimiento de un cuerpo o deformarlo.", "Un mecanismo de tornillo sinfín y rueda dentada."], "correct": 3, "answer": "Un mecanismo de tornillo sinfín y rueda dentada.", "topic": "Engranajes, bicicletas y sinfín", "explanation": "Un mecanismo de tornillo sinfín y rueda dentada."}, {"id": 69, "q": "¿Qué ventaja tiene el tornillo sinfín?", "options": ["Puede conseguir una gran reducción de velocidad y puede dificultar la transmisión inversa, según el sistema.", "La palanca.", "Movimiento rectilíneo alternativo.", "Palanca, polea y plano inclinado."], "correct": 0, "answer": "Puede conseguir una gran reducción de velocidad y puede dificultar la transmisión inversa, según el sistema.", "topic": "Engranajes, bicicletas y sinfín", "explanation": "Puede conseguir una gran reducción de velocidad y puede dificultar la transmisión inversa, según el sistema."}, {"id": 70, "q": "¿Qué mecanismo transforma movimiento circular en rectilíneo?", "options": ["Es el punto alrededor del cual gira una palanca.", "Piñón-cremallera.", "El mecanismo biela-manivela.", "Dirección, sentido e intensidad (magnitud)."], "correct": 1, "answer": "Piñón-cremallera.", "topic": "Mecanismos reversibles y gatos", "explanation": "Piñón-cremallera."}, {"id": 71, "q": "¿Qué significa que un mecanismo sea reversible?", "options": ["Movimiento circular.", "Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento.", "Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada.", "El mecanismo biela-manivela."], "correct": 2, "answer": "Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada.", "topic": "Mecanismos reversibles y gatos", "explanation": "Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada."}, {"id": 72, "q": "¿Qué mecanismo utilizan muchos gatos de coche?", "options": ["El newton (N).", "Entre la fuerza y la resistencia.", "Las ruedas giran en sentidos contrarios.", "Un tornillo-tuerca o un mecanismo de husillo, según el tipo de gato."], "correct": 3, "answer": "Un tornillo-tuerca o un mecanismo de husillo, según el tipo de gato.", "topic": "Mecanismos reversibles y gatos", "explanation": "Un tornillo-tuerca o un mecanismo de husillo, según el tipo de gato."}, {"id": 73, "q": "¿Qué mecanismo aparece en los trípodes?", "options": ["Un tornillo-tuerca o husillo.", "Movimiento rectilíneo.", "Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria.", "Un piñón y una cremallera."], "correct": 0, "answer": "Un tornillo-tuerca o husillo.", "topic": "Mecanismos reversibles y gatos", "explanation": "Un tornillo-tuerca o husillo."}, {"id": 74, "q": "¿Qué mecanismo se utiliza en puertas de garaje automáticas?", "options": ["Movimiento rectilíneo alternativo.", "Un sistema de motor con transmisión por engranajes, cadena o correa, según el diseño.", "Entre el fulcro y la fuerza.", "Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes."], "correct": 1, "answer": "Un sistema de motor con transmisión por engranajes, cadena o correa, según el diseño.", "topic": "Mecanismos reversibles y gatos", "explanation": "Un sistema de motor con transmisión por engranajes, cadena o correa, según el diseño."}, {"id": 75, "q": "¿Qué movimiento realiza el seguidor en una leva?", "options": ["Piñón-cremallera.", "Movimiento rectilíneo alternativo.", "Movimiento alternativo o de vaivén.", "Reduce la fuerza necesaria para levantar una carga, idealmente aproximadamente a la mitad con una sola polea móvil."], "correct": 2, "answer": "Movimiento alternativo o de vaivén.", "topic": "Mecanismos reversibles y gatos", "explanation": "Movimiento alternativo o de vaivén."}, {"id": 76, "q": "¿Por qué la leva no es reversible?", "options": ["Dientes.", "Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas.", "Movimiento circular.", "Porque su geometría está diseñada para que el movimiento del seguidor no se transmita fácilmente en sentido contrario."], "correct": 3, "answer": "Porque su geometría está diseñada para que el movimiento del seguidor no se transmita fácilmente en sentido contrario.", "topic": "Mecanismos reversibles y gatos", "explanation": "Porque su geometría está diseñada para que el movimiento del seguidor no se transmita fácilmente en sentido contrario."}, {"id": 77, "q": "¿Qué mecanismo utilizan las locomotoras de vapor?", "options": ["El mecanismo biela-manivela.", "Tornillo-tuerca.", "El elemento motriz.", "Aumenta la velocidad de salida y normalmente disminuye el par."], "correct": 0, "answer": "El mecanismo biela-manivela.", "topic": "Biela-manivela y cigüeñal", "explanation": "El mecanismo biela-manivela."}, {"id": 78, "q": "¿Qué mecanismo utilizan los motores de combustión interna?", "options": ["Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada.", "El mecanismo biela-manivela.", "Transformar el movimiento alternativo de los pistones en giro y transmitirlo al sistema de salida.", "La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad."], "correct": 1, "answer": "El mecanismo biela-manivela.", "topic": "Biela-manivela y cigüeñal", "explanation": "El mecanismo biela-manivela."}, {"id": 79, "q": "¿Qué pieza conecta la manivela con el pistón?", "options": ["El engranaje helicoidal, porque el contacto entre dientes es más progresivo.", "El mecanismo biela-manivela.", "La biela.", "El elemento conducido."], "correct": 2, "answer": "La biela.", "topic": "Biela-manivela y cigüeñal", "explanation": "La biela."}, {"id": 80, "q": "¿Qué movimiento convierte el cigüeñal?", "options": ["Es la relación entre la velocidad de giro de entrada y la de salida.", "Un tornillo-tuerca o un mecanismo de husillo, según el tipo de gato.", "Movimiento rectilíneo vertical.", "El giro del cigüeñal se obtiene a partir del movimiento alternativo de los pistones; también puede describirse como la conversión entre giro y movimiento alternativo."], "correct": 3, "answer": "El giro del cigüeñal se obtiene a partir del movimiento alternativo de los pistones; también puede describirse como la conversión entre giro y movimiento alternativo.", "topic": "Biela-manivela y cigüeñal", "explanation": "El giro del cigüeñal se obtiene a partir del movimiento alternativo de los pistones; también puede describirse como la conversión entre giro y movimiento alternativo."}, {"id": 81, "q": "¿Qué mecanismo usarías para levantar una carga pesada con menos esfuerzo?", "options": ["Un polipasto.", "Los engranajes cónicos.", "La biela.", "El tambor o cilindro."], "correct": 0, "answer": "Un polipasto.", "topic": "Máquinas simples y aplicaciones", "explanation": "Un polipasto."}, {"id": 82, "q": "¿Qué máquina simple se basa en una barra rígida?", "options": ["Piñón-cremallera.", "La palanca.", "Un tornillo-tuerca o husillo.", "Aumenta el momento de la fuerza y se necesita menos fuerza para equilibrar la misma resistencia."], "correct": 1, "answer": "La palanca.", "topic": "Máquinas simples y aplicaciones", "explanation": "La palanca."}, {"id": 83, "q": "¿Qué máquina simple se basa en una superficie inclinada?", "options": ["Revoluciones por minuto.", "Una simple tiene pocos elementos y realiza una función básica; una compleja combina mecanismos para realizar tareas más elaboradas.", "El plano inclinado.", "El giro del cigüeñal se obtiene a partir del movimiento alternativo de los pistones; también puede describirse como la conversión entre giro y movimiento alternativo."], "correct": 2, "answer": "El plano inclinado.", "topic": "Máquinas simples y aplicaciones", "explanation": "El plano inclinado."}, {"id": 84, "q": "¿Qué tipo de máquina es un tornillo?", "options": ["Los dientes.", "Una fuerza es una interacción capaz de cambiar el movimiento de un cuerpo o deformarlo.", "Fuerza × brazo de fuerza = Resistencia × brazo de resistencia (F·dF = R·dR).", "Una máquina simple basada en el plano inclinado."], "correct": 3, "answer": "Una máquina simple basada en el plano inclinado.", "topic": "Máquinas simples y aplicaciones", "explanation": "Una máquina simple basada en el plano inclinado."}, {"id": 85, "q": "¿Qué movimiento realiza una broca de taladro?", "options": ["Movimiento de giro y, al avanzar, movimiento lineal de penetración.", "Movimiento rectilíneo alternativo.", "Palanca, polea y plano inclinado.", "Unas pinzas o unas pinzas de depilar."], "correct": 0, "answer": "Movimiento de giro y, al avanzar, movimiento lineal de penetración.", "topic": "Máquinas simples y aplicaciones", "explanation": "Movimiento de giro y, al avanzar, movimiento lineal de penetración."}, {"id": 86, "q": "¿Qué tipo de movimiento tiene un ascensor?", "options": ["La correa.", "Movimiento rectilíneo vertical.", "Dirección, sentido e intensidad (magnitud).", "Es el punto alrededor del cual gira una palanca."], "correct": 1, "answer": "Movimiento rectilíneo vertical.", "topic": "Máquinas simples y aplicaciones", "explanation": "Movimiento rectilíneo vertical."}, {"id": 87, "q": "¿Qué ocurre si aumenta el brazo de fuerza en una palanca?", "options": ["Rueda acanalada que gira alrededor de un eje y permite cambiar la dirección de una cuerda o transmitir movimiento.", "Piñón-cremallera.", "Aumenta el momento de la fuerza y se necesita menos fuerza para equilibrar la misma resistencia.", "Movimiento circular."], "correct": 2, "answer": "Aumenta el momento de la fuerza y se necesita menos fuerza para equilibrar la misma resistencia.", "topic": "Máquinas simples y aplicaciones", "explanation": "Aumenta el momento de la fuerza y se necesita menos fuerza para equilibrar la misma resistencia."}, {"id": 88, "q": "¿Qué elemento de un engranaje encaja con otro engranaje?", "options": ["Entre la fuerza y la resistencia.", "Las ruedas giran en sentidos contrarios.", "Una biela y una manivela.", "Los dientes."], "correct": 3, "answer": "Los dientes.", "topic": "Máquinas simples y aplicaciones", "explanation": "Los dientes."}, {"id": 89, "q": "¿Qué mecanismo transforma un movimiento alternativo en circular?", "options": ["El mecanismo biela-manivela.", "Permite cambiar la dirección de la fuerza; en una polea fija ideal no reduce la fuerza necesaria.", "Un piñón y una cremallera.", "El valor o intensidad de la fuerza."], "correct": 0, "answer": "El mecanismo biela-manivela.", "topic": "Mecanismos y movimientos", "explanation": "El mecanismo biela-manivela."}, {"id": 90, "q": "¿Qué tipo de mecanismo aparece en un reloj?", "options": ["Un sistema de poleas o polipasto.", "Un conjunto de engranajes, generalmente para transmitir y regular el movimiento de las agujas.", "Ruedas dentadas que transmiten movimiento y fuerza mediante el contacto de sus dientes.", "Movimiento rectilíneo alternativo."], "correct": 1, "answer": "Un conjunto de engranajes, generalmente para transmitir y regular el movimiento de las agujas.", "topic": "Mecanismos y movimientos", "explanation": "Un conjunto de engranajes, generalmente para transmitir y regular el movimiento de las agujas."}, {"id": 91, "q": "¿Qué mecanismo aparece en una lavadora para mover el tambor?", "options": ["Movimiento rectilíneo alternativo.", "Disminuye la velocidad de salida y normalmente aumenta el par o fuerza de giro.", "Una transmisión por correa y poleas.", "Piñón-cremallera."], "correct": 2, "answer": "Una transmisión por correa y poleas.", "topic": "Mecanismos y movimientos", "explanation": "Una transmisión por correa y poleas."}, {"id": 92, "q": "¿Qué mecanismo utilizan las impresoras para arrastrar papel?", "options": ["Eje con codos o muñequillas que convierte entre movimiento giratorio y alternativo mediante bielas.", "Movimiento circular.", "Piñón-cremallera.", "Un sistema de rodillos, normalmente de fricción o motorizados, que arrastran el papel."], "correct": 3, "answer": "Un sistema de rodillos, normalmente de fricción o motorizados, que arrastran el papel.", "topic": "Mecanismos y movimientos", "explanation": "Un sistema de rodillos, normalmente de fricción o motorizados, que arrastran el papel."}, {"id": 93, "q": "¿Qué elemento permite enrollar una cuerda en un torno?", "options": ["El tambor o cilindro.", "El elemento motriz.", "Aumenta la velocidad de salida y normalmente disminuye el par.", "El mecanismo biela-manivela."], "correct": 0, "answer": "El tambor o cilindro.", "topic": "Mecanismos y movimientos", "explanation": "El tambor o cilindro."}, {"id": 94, "q": "¿Qué significa rpm?", "options": ["Una máquina simple basada en el plano inclinado.", "Revoluciones por minuto.", "La fuerza necesaria disminuye; idealmente, con una polea móvil simple se reduce aproximadamente a la mitad.", "Es reversible cuando el movimiento puede transmitirse en ambos sentidos, de entrada a salida y de salida a entrada."], "correct": 1, "answer": "Revoluciones por minuto.", "topic": "Mecanismos y movimientos", "explanation": "Revoluciones por minuto."}, {"id": 95, "q": "¿Qué tipo de movimiento tiene un pistón?", "options": ["El mecanismo biela-manivela.", "Una transmisión por correa y poleas.", "Movimiento rectilíneo alternativo.", "El engranaje helicoidal, porque el contacto entre dientes es más progresivo."], "correct": 2, "answer": "Movimiento rectilíneo alternativo.", "topic": "Mecanismos y movimientos", "explanation": "Movimiento rectilíneo alternativo."}, {"id": 96, "q": "¿Qué mecanismo convierte el giro en movimiento de vaivén?", "options": ["Un tornillo-tuerca o un mecanismo de husillo, según el tipo de gato.", "Movimiento de giro y, al avanzar, movimiento lineal de penetración.", "El engranaje helicoidal.", "El mecanismo biela-manivela."], "correct": 3, "answer": "El mecanismo biela-manivela.", "topic": "Mecanismos y movimientos", "explanation": "El mecanismo biela-manivela."}, {"id": 97, "q": "¿Qué parte fija soporta las fuerzas en una máquina?", "options": ["El bastidor o estructura fija.", "La biela.", "Un sistema de rodillos, normalmente de fricción o motorizados, que arrastran el papel.", "Conjunto de elementos que transmiten o transforman el movimiento y las fuerzas dentro de una máquina."], "correct": 0, "answer": "El bastidor o estructura fija.", "topic": "Elementos de máquinas y engranajes", "explanation": "El bastidor o estructura fija."}, {"id": 98, "q": "¿Qué parte móvil permite el movimiento en una máquina?", "options": ["Transforma un tipo de movimiento en otro diferente.", "El elemento móvil o parte móvil.", "Movimiento rectilíneo vertical.", "Piñón-cremallera."], "correct": 1, "answer": "El elemento móvil o parte móvil.", "topic": "Elementos de máquinas y engranajes", "explanation": "El elemento móvil o parte móvil."}, {"id": 99, "q": "¿Qué tipo de engranaje tiene dientes inclinados?", "options": ["Una simple tiene pocos elementos y realiza una función básica; una compleja combina mecanismos para realizar tareas más elaboradas.", "Una carretilla.", "El engranaje helicoidal.", "El tambor o cilindro."], "correct": 2, "answer": "El engranaje helicoidal.", "topic": "Elementos de máquinas y engranajes", "explanation": "El engranaje helicoidal."}, {"id": 100, "q": "¿Qué mecanismo usarías para transformar un giro en desplazamiento lineal continuo?", "options": ["Una fuerza es una interacción capaz de cambiar el movimiento de un cuerpo o deformarlo.", "Fuerza × brazo de fuerza = Resistencia × brazo de resistencia (F·dF = R·dR).", "Giran en sentidos contrarios.", "Piñón-cremallera."], "correct": 3, "answer": "Piñón-cremallera.", "topic": "Elementos de máquinas y engranajes", "explanation": "Piñón-cremallera."}];
-let fullSubmitted=false,exam={items:[],pos:0,answers:{},start:0,done:false},flashIndex=0,flashRevealed=false;
-const $=id=>document.getElementById(id),letters=['A','B','C','D'];
-function esc(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function tab(t){['test','exam','study','flash','prog'].forEach(x=>$(x).classList.toggle('hidden',x!==t));['Test','Exam','Study','Flash','Prog'].forEach(x=>$('n'+x).classList.toggle('active',x.toLowerCase()===t));if(t==='study')renderStudy();if(t==='flash')renderFlash();if(t==='prog')renderProg()}
-function qhtml(x,mode){return `<div class="q" data-id="${x.id}"><div class="qhead"><div><span class="qnum">${x.id}.</span> ${esc(x.q)}</div><span class="topic">${esc(x.topic)}</span></div>${x.options.map((o,j)=>`<button class="option" data-mode="${mode}" data-id="${x.id}" data-a="${j}" onclick="pick('${mode}',${x.id},${j})">${letters[j]}. ${esc(o)}</button>`).join('')}<div class="feedback" id="${mode}fb${x.id}"></div></div>`}
-function renderFull(){$('testQuestions').innerHTML=data.map(x=>`<div class="card">${qhtml(x,'full')}</div>`).join('');updateFull()}
-function pick(mode,id,a){if(mode==='full'&&fullSubmitted)return;if(mode==='exam'&&exam.done)return;document.querySelectorAll(`[data-mode="${mode}"][data-id="${id}"]`).forEach(b=>b.classList.remove('selected'));document.querySelector(`[data-mode="${mode}"][data-id="${id}"][data-a="${a}"]`).classList.add('selected');if(mode==='full')updateFull();else exam.answers[id]=a}
-function updateFull(){let n=new Set([...document.querySelectorAll('[data-mode="full"].selected')].map(x=>x.dataset.id)).size;$('testcount').textContent=n+' / 100 respondidas';$('testbar').style.width=n+'%'}
-function gradeFull(){fullSubmitted=true;let score=0;data.forEach(x=>{let s=document.querySelector(`[data-mode="full"][data-id="${x.id}"].selected`);document.querySelectorAll(`[data-mode="full"][data-id="${x.id}"]`).forEach((b,j)=>{if(j===x.correct)b.classList.add('correct');if(s&&+s.dataset.a===j&&j!==x.correct)b.classList.add('wrong')});if(s&&+s.dataset.a===x.correct)score++;$('fullfb'+x.id).innerHTML=s&&+s.dataset.a===x.correct?'<span class="good">✓ Correcta.</span>':'<span class="bad">✗ Incorrecta.</span> Respuesta: <strong>'+esc(x.answer)+'</strong>'});saveResult('Test completo',score,100);$('testResult').classList.remove('hidden');$('testResult').innerHTML=`<div class="big">${score} / 100 · ${(score/10).toFixed(2).replace('.',',')} / 10</div><div class="muted">Revisa las respuestas y vuelve a intentarlo cuando quieras.</div>`;scrollTo({top:0,behavior:'smooth'})}
-function resetFull(){fullSubmitted=false;$('testResult').classList.add('hidden');renderFull();scrollTo({top:0,behavior:'smooth'})}
-function startExam(){let n=+$('examN').value;exam.items=[...data].sort(()=>Math.random()-.5).slice(0,n);exam.pos=0;exam.answers={};exam.start=Date.now();exam.done=false;renderExam()}
-function renderExam(){if(!exam.items.length){$('examBox').innerHTML='<div class="card">Pulsa «Empezar examen» para comenzar.</div>';return}let x=exam.items[exam.pos];$('examBox').innerHTML=`<div class="card"><div class="toolbar"><span class="badge">Pregunta ${exam.pos+1} / ${exam.items.length}</span><span id="exTimer">00:00</span></div>${qhtml(x,'exam')}<div class="toolbar"><button onclick="examPrev()">← Anterior</button>${exam.pos<exam.items.length-1?'<button class="btn primary" onclick="examNext()">Siguiente →</button>':'<button class="btn primary" onclick="finishExam()">Finalizar</button>'}</div></div>`;let a=exam.answers[x.id];if(a!==undefined)document.querySelector(`[data-mode="exam"][data-id="${x.id}"][data-a="${a}"]`).classList.add('selected')}
-function examNext(){if(exam.pos<exam.items.length-1){exam.pos++;renderExam()}}function examPrev(){if(exam.pos>0){exam.pos--;renderExam()}}
-function finishExam(){let score=exam.items.reduce((s,x)=>s+(exam.answers[x.id]===x.correct?1:0),0);exam.done=true;saveResult('Modo examen',score,exam.items.length);$('examBox').innerHTML=`<div class="card"><div class="big">${score} / ${exam.items.length} · ${(score/exam.items.length*10).toFixed(2).replace('.',',')} / 10</div><p>Examen terminado.</p><button class="btn primary" onclick="startExam()">Nuevo examen</button></div>`}
-function renderStudy(){let term=($('studySearch').value||'').toLowerCase(),topic=$('topicFilter').value;let arr=data.filter(x=>(!topic||x.topic===topic)&&(x.id+' '+x.q+' '+x.answer+' '+x.topic).toLowerCase().includes(term));$('studyList').innerHTML=arr.map(x=>`<div class="card"><div class="study-q" onclick="toggleA(${x.id})"><span><span class="qnum">${x.id}.</span> ${esc(x.q)}</span><span class="topic">${esc(x.topic)}</span></div><div id="a${x.id}" class="answer"><strong>Respuesta:</strong> ${esc(x.answer)}<br><br><strong>Explicación:</strong> ${esc(x.explanation)}</div></div>`).join('')}
-function toggleA(id){$('a'+id).classList.toggle('open')}
-function renderFlash(){let x=data[flashIndex];$('flashCard').innerHTML=flashRevealed?`<button onclick="flashRevealed=false;renderFlash()"><div class="muted">Respuesta</div>${esc(x.answer)}</button>`:`<button onclick="flashRevealed=true;renderFlash()">${esc(x.q)}</button>`;$('flashCount').textContent=(flashIndex+1)+' / '+data.length}
-function nextFlash(){flashIndex=(flashIndex+1)%data.length;flashRevealed=false;renderFlash()}function prevFlash(){flashIndex=(flashIndex-1+data.length)%data.length;flashRevealed=false;renderFlash()}
-function saveResult(name,score,total){let h=JSON.parse(localStorage.getItem('mm_history')||'[]');h.unshift({name,score,total,date:new Date().toLocaleString('es-ES')});localStorage.setItem('mm_history',JSON.stringify(h.slice(0,20)))}
-function renderProg(){let h=JSON.parse(localStorage.getItem('mm_history')||'[]'),best=h.length?Math.max(...h.map(x=>x.score/x.total*10)):0,avg=h.length?h.reduce((a,x)=>a+x.score/x.total*10,0)/h.length:0;$('stats').innerHTML=[['Intentos',h.length],['Mejor nota',best.toFixed(2).replace('.',',')],['Media',avg.toFixed(2).replace('.',',')],['Preguntas',100]].map(x=>`<div class="card"><div class="big">${x[1]}</div><div class="small">${x[0]}</div></div>`).join('');$('history').innerHTML=h.length?h.map(x=>`<div class="note">${x.name} · <strong>${x.score}/${x.total}</strong> · ${(x.score/x.total*10).toFixed(2).replace('.',',')} / 10 · ${x.date}</div>`).join(''):'<p class="muted">Todavía no hay resultados.</p>'}
-function clearProgress(){localStorage.removeItem('mm_history');renderProg()}
-[...new Set(data.map(x=>x.topic))].forEach(t=>{let o=document.createElement('option');o.value=t;o.textContent=t;$('topicFilter').appendChild(o)});
-renderFull();renderStudy();renderFlash();renderProg();
-</script>
-<script>
-(function(){
-  const KEY='mm4eso_v3';
-  let state=JSON.parse(localStorage.getItem(KEY)||'{"xp":0,"level":"facil"}');
-  const levels=document.querySelectorAll('.v3-level');
-  const fill=document.getElementById('v3-xp-fill');
-  const xpText=document.getElementById('v3-xp-text');
+// ============================================
+// CONFIGURACIÓN DE SUPABASE
+// ============================================
 
-  function render(){
-    const lvl=Math.floor(state.xp/100)+1;
-    const pct=state.xp%100;
-    if(xpText) xpText.textContent=state.xp+' XP · Nivel '+lvl;
-    if(fill) fill.style.width=pct+'%';
-    levels.forEach(b=>b.classList.toggle('active',b.dataset.level===state.level));
-  }
-  levels.forEach(b=>b.addEventListener('click',()=>{
-    state.level=b.dataset.level;
-    state.xp += b.dataset.level==='facil'?5:(b.dataset.level==='medio'?10:15);
-    localStorage.setItem(KEY,JSON.stringify(state)); render();
-  }));
-  render();
-})();
-</script>
-
-</bod<!-- INICIO DE SESIÓN -->
-<div id="cuenta" style="position:fixed;top:12px;right:12px;z-index:9999;background:#18212f;color:white;padding:15px;border-radius:12px;width:260px;font-family:Arial">
-  <h3>Mi cuenta</h3>
-  <input id="email" type="email" placeholder="Tu correo" style="width:95%;padding:8px;margin:4px 0">
-  <input id="password" type="password" placeholder="Contraseña" style="width:95%;padding:8px;margin:4px 0">
-  <button onclick="registrar()">Crear cuenta</button>
-  <button onclick="entrar()">Iniciar sesión</button>
-  <button onclick="salir()">Cerrar sesión</button>
-  <p id="estadoCuenta">No has iniciado sesión</p>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
 const SUPABASE_URL = "https://xdwosfpczlzpnhqmgpjr.supabase.co";
-const SUPABASE_KEY = "https://xdwosfpczlzpnhqmgpjr.supabase.co";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+// Pega aquí la PUBLISHABLE KEY de tu proyecto Supabase.
+// No uses la clave service_role ni una clave secreta.
 
-async function registrar() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const SUPABASE_KEY = "PEGA_AQUI_TU_CLAVE_PUBLICA";
 
-  const { error } = await db.auth.signUp({
-    email,
-    password
+let supabaseClient = null;
+
+if (
+  SUPABASE_URL.startsWith("https://") &&
+  SUPABASE_KEY !== "PEGA_AQUI_TU_CLAVE_PUBLICA" &&
+  SUPABASE_KEY.length > 20
+) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+}
+
+// ============================================
+// BANCO DE PREGUNTAS
+// ============================================
+
+const questions = [
+"¿Qué es una fuerza?",
+"Indica las tres características de una fuerza.",
+"¿Cuál es la unidad de fuerza en el Sistema Internacional?",
+"¿Qué diferencia hay entre masa y peso?",
+"¿Qué es una máquina?",
+"¿Qué son los mecanismos?",
+"¿Qué diferencia hay entre máquinas simples y compuestas?",
+"Indica las tres máquinas simples básicas.",
+"¿Qué tipo de movimiento realiza una rueda?",
+"¿Qué tipo de movimiento tiene una puerta corredera?",
+"¿Qué es el movimiento alternativo?",
+"¿Qué es un mecanismo de transmisión?",
+"¿Qué es un mecanismo de transformación?",
+"Enuncia la ley de la palanca.",
+"¿Qué es el fulcro de una palanca?",
+"¿Dónde se encuentra el punto de apoyo en una palanca de primer género?",
+"¿Dónde se encuentra la resistencia en una palanca de segundo género?",
+"¿Dónde se aplica la fuerza en una palanca de tercer género?",
+"Pon un ejemplo de palanca de primer género.",
+"Pon un ejemplo de palanca de segundo género.",
+"Pon un ejemplo de palanca de tercer género.",
+"¿Qué es una polea?",
+"¿Qué ventaja tiene una polea fija?",
+"¿Qué ventaja tiene una polea móvil?",
+"¿Qué es un polipasto?",
+"¿Qué son las ruedas de fricción?",
+"¿En qué sentido giran dos ruedas de fricción en contacto?",
+"¿Para qué sirve una correa en un sistema de poleas?",
+"¿Qué ocurre cuando se cruza la correa de un sistema de poleas?",
+"¿Qué son los engranajes?",
+"¿Qué son los dientes de un engranaje?",
+"¿Qué transmiten los engranajes?",
+"¿Qué tipos de engranajes existen?",
+"¿Para qué sirve un tornillo sin fin?",
+"¿Qué mecanismo transforma el movimiento circular en lineal mediante una barra dentada?",
+"¿Qué elementos forman el mecanismo piñón-cremallera?",
+"¿Qué mecanismo se utiliza en la dirección de un automóvil?",
+"¿En qué consiste el mecanismo tornillo-tuerca?",
+"¿Qué movimiento transforma el mecanismo tornillo-tuerca?",
+"¿Qué es una leva?",
+"¿Qué es una excéntrica?",
+"¿Qué elementos forman el mecanismo biela-manivela?",
+"¿Qué movimiento realiza el pistón de un motor?",
+"¿Qué es un cigüeñal?",
+"¿Para qué sirve el cigüeñal?",
+"¿Qué significa reducir el esfuerzo?",
+"¿Qué fuerza atrae los cuerpos hacia la Tierra?",
+"¿Cuál es la fórmula del peso?",
+"¿Cómo se mide la magnitud de una fuerza?",
+"¿Qué movimiento realiza la hoja de una sierra de calar?",
+"¿Qué elemento produce el movimiento en una máquina?",
+"¿Qué elemento recibe el movimiento en una máquina?",
+"¿Qué movimiento se transforma mediante una manivela?",
+"¿Qué es un torno?",
+"¿Qué mecanismo se utiliza en un pozo para subir un cubo?",
+"¿Qué mecanismo utiliza una grúa para elevar cargas?",
+"¿Qué movimiento realiza una polea?",
+"¿Qué fuerza se necesita idealmente para elevar una carga con una polea móvil?",
+"¿Qué es la relación de transmisión?",
+"¿En qué unidad se mide la velocidad de giro de una rueda?",
+"¿Qué es la rueda motriz?",
+"¿Qué es la rueda conducida?",
+"¿Qué es un reductor de velocidad?",
+"¿Qué es un multiplicador de velocidad?",
+"¿Qué tipo de engranajes suele producir menos ruido?",
+"¿Qué engranajes se utilizan para transmitir movimiento entre ejes perpendiculares?",
+"¿Qué mecanismo transmite el movimiento en una bicicleta?",
+"¿Qué mecanismo se utiliza en las clavijas de una guitarra?",
+"¿Qué ventaja tiene un tornillo sin fin?",
+"¿Qué mecanismo transforma el movimiento circular en rectilíneo?",
+"¿Qué es un mecanismo reversible?",
+"¿Qué mecanismo utiliza un gato de coche para levantar el vehículo?",
+"¿Qué tipo de máquina simple es un trípode?",
+"¿Qué mecanismo puede utilizar una puerta de garaje automática?",
+"¿Qué movimiento realiza el seguidor de una leva?",
+"¿Por qué una leva normalmente no es reversible?",
+"¿Qué mecanismo se utilizaba para transformar el movimiento en una locomotora de vapor?",
+"¿Qué mecanismo transforma el movimiento en un motor de combustión?",
+"¿Qué pieza conecta la biela con el pistón?",
+"¿Qué movimiento se obtiene en el cigüeñal?",
+"¿Qué mecanismo permite levantar grandes cargas con menos esfuerzo?",
+"¿Qué máquina simple consiste en una barra rígida que gira sobre un punto de apoyo?",
+"¿Qué máquina simple es una superficie inclinada?",
+"¿A qué tipo de máquina simple pertenece el tornillo?",
+"¿Qué movimiento realiza la broca de un taladro?",
+"¿Qué movimiento realiza un ascensor?",
+"¿Qué ocurre al aumentar el brazo de fuerza de una palanca?",
+"¿Qué elemento engrana con los dientes de otro engranaje?",
+"¿Qué mecanismo transforma el movimiento alternativo en circular?",
+"¿Qué mecanismo se utiliza habitualmente en un reloj mecánico?",
+"¿Qué mecanismo mueve el tambor de una lavadora?",
+"¿Qué mecanismo permite alimentar el papel en una impresora?",
+"¿Qué elemento de un torno enrolla la cuerda?",
+"¿Qué significa rpm?",
+"¿Qué movimiento realiza un pistón?",
+"¿Qué mecanismo transforma la rotación en movimiento alternativo?",
+"¿Qué parte fija de una máquina soporta las fuerzas?",
+"¿Qué elemento móvil permite el movimiento de una máquina?",
+"¿Qué son los engranajes de dientes inclinados?",
+"¿Qué mecanismo transforma el giro en un desplazamiento lineal continuo?"
+];
+
+// ============================================
+// NAVEGACIÓN
+// ============================================
+
+function goTo(id) {
+  document.getElementById(id).scrollIntoView({
+    behavior: "smooth",
+    block: "start"
   });
-
-  document.getElementById("estadoCuenta").textContent =
-    error ? error.message : "Revisa tu correo para confirmar la cuenta.";
 }
 
-async function entrar() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+// ============================================
+// AUTENTICACIÓN
+// ============================================
 
-  const { data, error } = await db.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  document.getElementById("estadoCuenta").textContent =
-    error ? error.message : "Sesión iniciada: " + data.user.email;
+function showMessage(id, message, type = "error") {
+  const el = document.getElementById(id);
+  el.className = "status " + type;
+  el.textContent = message;
 }
 
-async function salir() {
-  await db.auth.signOut();
-  document.getElementById("estadoCuenta").textContent =
-    "Has cerrado sesión";
-}
-
-db.auth.onAuthStateChange((event, session) => {
-  if (session) {
-    document.getElementById("estadoCuenta").textContent =
-      "Sesión iniciada: " + session.user.email;
+async function register() {
+  if (!supabaseClient) {
+    showMessage("authMessage", "Configura primero la clave pública de Supabase.");
+    return;
   }
-});
-</script>y></html>
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    showMessage("authMessage", "Introduce el correo y la contraseña.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: window.location.origin +
+        window.location.pathname
+    }
+  });
+
+  if (error) {
+    showMessage("authMessage", error.message);
+    return;
+  }
+
+  if (data.session) {
+    showMessage("authMessage", "Cuenta creada correctamente.", "success");
+    updateUser(data.session.user);
+  } else {
+    showMessage(
+      "authMessage",
+      "Cuenta creada. Revisa tu correo para confirmar el registro.",
+      "success"
+    );
+  }
+}
+
+async function login() {
+  if (!supabaseClient) {
+    showMessage("authMessage", "Configura primero la clave pública de Supabase.");
+    return;
+  }
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    showMessage("authMessage", "Introduce el correo y la contraseña.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showMessage("authMessage", error.message);
+    return;
+  }
+
+  showMessage("authMessage", "Sesión iniciada.", "success");
+  updateUser(data.user);
+}
+
+async function logout() {
+  if (!supabaseClient) return;
+
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  updateUser(null);
+}
+
+function updateUser(user) {
+  document.getElementById("userInfo").classList.toggle("hidden", !user);
+  document.getElementById("authForm").classList.toggle("hidden", !!user);
+
+  if (user) {
+    document.getElementById("userEmail").textContent = user.email;
+  }
+}
+
+async function checkSession() {
+  if (!supabaseClient) return;
+
+  const { data } = await supabaseClient.auth.getSession();
+
+  updateUser(data.session?.user || null);
+
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    updateUser(session?.user || null);
+  });
+}
+
+// ============================================
+// CUESTIONARIO
+// ============================================
+
+let quizQuestions = [];
+let currentIndex = 0;
+let answers = [];
+let lastCompleted = 0;
+
+function startQuiz() {
+  const count = Number(document.getElementById("questionCount").value);
+
+  // Baraja las preguntas sin modificar el banco original.
+  const shuffled = [...questions].sort(() => Math.random() - 0.5);
+
+  quizQuestions = shuffled.slice(0, Math.min(count, questions.length));
+  answers = new Array(quizQuestions.length).fill("");
+  currentIndex = 0;
+
+  document.getElementById("quizStart").classList.add("hidden");
+  document.getElementById("quizResult").classList.add("hidden");
+  document.getElementById("quizArea").classList.remove("hidden");
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  document.getElementById("questionNumber").textContent =
+    "Pregunta " + (currentIndex + 1) + " de " + quizQuestions.length;
+
+  const completed = answers.filter(a => a.trim() !== "").length;
+
+  document.getElementById("answeredNumber").textContent =
+    completed + " respondidas";
+
+  document.getElementById("progressBar").style.width =
+    ((currentIndex + 1) / quizQuestions.length * 100) + "%";
+
+  document.getElementById("questionText").textContent =
+    quizQuestions[currentIndex];
+
+  document.getElementById("answer").value = answers[currentIndex] || "";
+}
+
+function storeAnswer() {
+  answers[currentIndex] = document.getElementById("answer").value.trim();
+}
+
+function nextQuestion() {
+  storeAnswer();
+
+  if (currentIndex < quizQuestions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  }
+}
+
+function previousQuestion() {
+  storeAnswer();
+
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+  }
+}
+
+function finishQuiz() {
+  storeAnswer();
+
+  lastCompleted = answers.filter(a => a.trim() !== "").length;
+
+  document.getElementById("quizArea").classList.add("hidden");
+  document.getElementById("quizResult").classList.remove("hidden");
+
+  document.getElementById("completedNumber").textContent =
+    lastCompleted + "/" + quizQuestions.length;
+
+  document.getElementById("completionMessage").textContent =
+    "Has respondido " + lastCompleted + " de " +
+    quizQuestions.length + " preguntas.";
+}
+
+function cancelQuiz() {
+  document.getElementById("quizArea").classList.add("hidden");
+  document.getElementById("quizResult").classList.add("hidden");
+  document.getElementById("quizStart").classList.remove("hidden");
+}
+
+// ============================================
+// GUARDAR RESULTADOS EN SUPABASE
+// ============================================
+
+async function saveResult() {
+  if (!supabaseClient) {
+    showMessage("saveMessage", "Configura primero la conexión con Supabase.");
+    return;
+  }
+
+  const { data: sessionData, error: sessionError } =
+    await supabaseClient.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    showMessage(
+      "saveMessage",
+      "Inicia sesión antes de guardar tus resultados."
+    );
+    return;
+  }
+
+  const user = sessionData.session.user;
+
+  // Se guarda el número de respuestas escritas.
+  // No se presenta como una nota corregida automáticamente.
+  const { error } = await supabaseClient
+    .from("resultados")
+    .insert({
+      user_id: user.id,
+      nota: 0,
+      aciertos: lastCompleted,
+      total: quizQuestions.length
+    });
+
+  if (error) {
+    showMessage("saveMessage", "No se pudo guardar: " + error.message);
+    return;
+  }
+
+  showMessage("saveMessage", "Resultado guardado correctamente.", "success");
+  loadResults();
+}
+
+// ============================================
+// CONSULTAR RESULTADOS
+// ============================================
+
+async function loadResults() {
+  if (!supabaseClient) {
+    showMessage("resultsMessage", "Configura la clave pública de Supabase.");
+    return;
+  }
+
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+
+  if (!sessionData.session) {
+    showMessage(
+      "resultsMessage",
+      "Inicia sesión para ver tus resultados."
+    );
+    return;
+  }
+
+  const user = sessionData.session.user;
+
+  const { data, error } = await supabaseClient
+    .from("resultados")
+    .select("nota, aciertos, total, fecha")
+    .eq("user_id", user.id)
+    .order("fecha", { ascending: false });
+
+  if (error) {
+    showMessage("resultsMessage", "Error al cargar: " + error.message);
+    return;
+  }
+
+  const tbody = document.getElementById("resultsTable");
+  tbody.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    showMessage("resultsMessage", "Todavía no tienes resultados guardados.");
+    return;
+  }
+
+  document.getElementById("resultsMessage").textContent = "";
+
+  data.forEach(result => {
+    const row = document.createElement("tr");
+
+    const date = result.fecha
+      ? new Date(result.fecha).toLocaleDateString("es-ES")
+      : "Sin fecha";
+
+    const percent = result.total > 0
+      ? Math.round(result.aciertos / result.total * 100)
+      : 0;
+
+    [date, result.aciertos, result.total, percent + "%"].forEach(value => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
+    });
+
+    tbody.appendChild(row);
+  });
+}
+
+// ============================================
+// INICIAR LA APLICACIÓN
+// ============================================
+
+checkSession();
+</script>
+
+</body>
+</html>
